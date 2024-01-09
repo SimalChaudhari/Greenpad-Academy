@@ -1,0 +1,75 @@
+@font-face {
+    font-family: 'calibri';
+    src: url('path/to/Calibri Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'arial';
+    src: url('path/to/arial.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'impact';
+    src: url('path/to/impact.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+.ql-editor .ql-font-roboto {
+    font-family: 'Roboto', sans-serif;
+  }
+  .ql-editor .ql-font-calibri {
+      font-family: 'Calibri', sans-serif;
+  }
+  .ql-editor .ql-font-impact {
+      font-family: 'Impact', sans-serif;
+  }
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=calibri]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=calibri]::before {
+    content: 'Calibri';
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=roboto]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=roboto]::before {
+    content: 'Roboto';
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=impact]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=impact]::before {
+    content: 'Impact';
+}
+    
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=calibri]::before {
+    font-family: 'Calibri', sans-serif;
+}
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=roboto]::before {
+    font-family: 'Roboto', sans-serif;
+}
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=impact]::before {
+    font-family: 'Impact', sans-serif;
+}
+
+
+.ql-font-roboto {
+    font-family: 'Roboto', sans-serif;
+}
+
+.ql-font-calibri {
+    font-family: 'Calibri', sans-serif;
+}
+.ql-font-impact {
+    font-family: 'Impact', sans-serif;
+}
+
+
+.ql-editor p span .ql-font-impact {
+    font-family: 'Impact', sans-serif !important;
+  }
+
+  
+.ql-editor p span .ql-font-calibri {
+    font-family: 'Calibri', sans-serif !important;
+  }

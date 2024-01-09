@@ -1,0 +1,29 @@
+.description-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px; 
+  }
+  
+  .round-border {
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 5px;
+    cursor: pointer;
+    opacity: .3;
+  }
+  
+  .round-border.active {
+    background-color: #4d4f5c;
+    opacity: 1;
+    color: white;
+    transform: rotateY(360deg);
+    transition: transform 1s;
+  }
+
+  
