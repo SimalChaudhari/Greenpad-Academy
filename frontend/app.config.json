@@ -1,7 +1,7 @@
 {
     apps : [
       {
-        name      : "GreeGreenpad-Academynap",
+        name      : "Greenpad-Academy-Frontend",
         script    : "npx",
         interpreter: "none",
         args: "serve -s build -p 3001"

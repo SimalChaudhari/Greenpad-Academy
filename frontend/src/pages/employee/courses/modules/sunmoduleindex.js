@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import screenfull from "screenfull";
 import { DeleteModel } from "../../../../Components/index";
 import { IMAGE_URL } from "../../../../config/config";
+import Switch from "react-switch";
 import Edit from "./Edit";
 import "./module.css";
 
@@ -275,7 +276,10 @@ const EmpCourseModulesIndex = () => {
 
     const completedModules =
       progress_list?.filter((module) => module?.is_completed)?.length || 0;
-      const progressPercentage = ((completedModules / totalModules) * 100).toFixed(2); // Limit to 2 decimal places
+    const progressPercentage = (
+      (completedModules / totalModules) *
+      100
+    ).toFixed(2); // Limit to 2 decimal places
 
     return progressPercentage;
   };
@@ -304,12 +308,12 @@ const EmpCourseModulesIndex = () => {
     };
 
     if (screenfull.isEnabled) {
-      screenfull.on('change', handleFullScreenChange);
+      screenfull.on("change", handleFullScreenChange);
     }
 
     return () => {
       if (screenfull.isEnabled) {
-        screenfull.off('change', handleFullScreenChange);
+        screenfull.off("change", handleFullScreenChange);
       }
     };
   }, [isZoomed]);
@@ -317,6 +321,7 @@ const EmpCourseModulesIndex = () => {
   const toggleFullscreen = () => {
     if (screenfull.isEnabled && contentRef.current) {
       screenfull.toggle(contentRef.current);
+      setIsHovered(true);
     }
   };
 
@@ -364,6 +369,55 @@ const EmpCourseModulesIndex = () => {
     };
     dispatch(deleteEmployeeNoteById(formData));
   };
+  const [isHovered, setIsHovered] = useState(true);
+
+  // const handleMouseEnter = () => {
+  //   setIsHovered(true);
+  // };
+
+  // const handleMouseLeave = () => {
+  //   setIsHovered(false);
+  // };
+  const handleClick = () => {
+    setIsHovered((prevIsHovered) => !prevIsHovered);
+  };
+  useEffect(() => {
+    // Use useEffect to set a timeout to change isHovered to false after 5 seconds
+    let timeoutId;
+    if (isHovered) {
+      timeoutId = setTimeout(() => {
+        setIsHovered(false);
+      }, 10000);
+    }
+
+    return () => {
+      // Clear the timeout if the component unmounts or isHovered changes
+      clearTimeout(timeoutId);
+    };
+  }, [isHovered]);
+
+  // useEffect(() => {
+  //   const handleMouseMove = () => {
+  //     // Reset the timeout when there is mouse movement
+  //     setIsHovered(true);
+  //   };
+
+  //   // Attach the event listener
+  //   window.addEventListener('mousemove', handleMouseMove);
+
+  //   // Detach the event listener when the component unmounts
+  //   return () => {
+  //     window.removeEventListener('mousemove', handleMouseMove);
+  //   };
+  // }, []);
+
+  // Toggle
+
+  const [showContent, setShowContent] = useState(true);
+
+  const toggleContent = () => {
+    setShowContent(!showContent);
+  };
 
   return (
     <Layout>
@@ -378,117 +432,139 @@ const EmpCourseModulesIndex = () => {
 
         <div className="container-fluid">
           <div className="row">
-            <div
-              className="col-lg-3 mt-2"
-              style={{
-                maxHeight: "720px",
-                minHeight: "400px",
-                overflowY: "scroll",
-              }}>
-              <div className="main_tab_content">
-                <div className="tab-content">
-                  <div className="mb-2 pt-3 black_bg pr-3 pl-3 pt-1 pb-3 color_white heading_tabs text-center">
-                    CHAPTERS
-                  </div>
-                  <div></div>
+            {/* <button onClick={toggleContent} className="chap_toggle text-white">
+              Hide
+            </button> */}
+            {showContent && (
+              <div
+                className="col-xl-2 mt-2"
+                style={{
+                  maxHeight: "720px",
+                  minHeight: "400px",
+                  overflowY: "scroll",
+                }}>
+                <div className="main_tab_content">
+                  <div className="tab-content">
+                    <div className="mb-2 pt-3 black_bg pr-3 pl-3 pt-1 pb-3 color_white heading_tabs text-center">
+                      CHAPTERS
+                    </div>
+                    <div></div>
 
-                  {data?.modules?.map((row, index) => (
-                    <div key={row?._id}>
-                      <div
-                        onClick={() => toggleModule(row)}
-                        className={`${
-                          activeRow === row?._id
-                            ? "mb-3 site_bg color_white pointer"
-                            : "mb-3 pointer"
-                        }`}>
+                    {data?.modules?.map((row, index) => (
+                      <div key={row?._id}>
                         <div
+                          onClick={() => toggleModule(row)}
                           className={`${
                             activeRow === row?._id
-                              ? "pt-2 pb-2 site_bg color_white "
-                              : "white_bg color_black pt-2 pb-2"
+                              ? "mb-3 site_bg color_white pointer"
+                              : "mb-3 pointer"
                           }`}>
-                          <div className="row">
-                            <div className="col-sm-1">
-                              <b
+                          <div
+                            className={`${
+                              activeRow === row?._id
+                                ? "pt-2 pb-2 site_bg color_white "
+                                : "white_bg color_black pt-2 pb-2"
+                            }`}>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "normal",
+                              }}>
+                              <div
                                 className={`${
                                   activeRow === row?._id
                                     ? "pt-2 pb-2 site_bg color_white pl-3 pr-3"
-                                    : "white_bg color_white black_bg pl-3 pr-3 pt-2 pb-2"
+                                    : "white_bg color_white black_bg pl-3 pr-3 pt-2 pb-2 mr-2"
                                 }`}>
-                                {index + 1}.
-                              </b>{" "}
-                            </div>
-                            <div className="col-sm-11">
-                              &nbsp;
-                              <b
-                                className="pl-3 pr-3"
-                                title={row?.module_title}>
-                                {row?.module_title?.length > 40
-                                  ? row?.module_title.substring(0, 40) + "..."
-                                  : row?.module_title}
-                              </b>{" "}
-                            </div>
-                          </div>
-                          <b>
-                            {/* <a
-                              href="#"
-                              style={{ color: "green", float: "right" }}
-                              className="pr-4"
-                              onClick={() => {
-                                navigatePage(
-                                  `/employee/modules/${row._id}/courses/${courseId}`
-                                );
-                              }}>
-                              <i className="fas fa-file-alt"></i> Open
-                            </a> */}
-                          </b>
-                        </div>
-                      </div>
-
-                      {activeRow === row?._id && (
-                        <div>
-                          {innerData?.module?.map((row, index) => (
-                            <div
-                              key={row?._id}
-                              className="mb-1 pointer"
-                              onClick={() => toggleInnerModule(row)}>
+                                <b>{index + 1}.</b>{" "}
+                              </div>
                               <div
-                                className={`${
-                                  activeModuleRow === row?._id
-                                    ? checkData.includes(row?._id)
-                                      ? "pt-2 pb-2 green_bg color_white pl-3 pr-3"
-                                      : "pt-2 pb-2 site_bg color_white pl-3 pr-3"
-                                    : "white_bg color_black pl-3 pr-3 pt-2 pb-2"
-                                }`}>
-                                {index + 1} :{/* {row?.title} */}
-                                {row?.title?.length > 45
-                                  ? row?.title.substring(0, 45) + "..."
-                                  : row?.title}
-                                {checkData.includes(row?._id) && (
-                                  <i
-                                    className="fa fa-check-circle"
-                                    style={{
-                                      fontSize: "20px",
-                                      float: "right",
-                                      margin: "3px 0px 0px 0",
-                                    }}></i>
-                                )}
+                                style={{
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                }}>
+                                {row?.module_title}
                               </div>
                             </div>
-                          ))}
+                            <b></b>
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  ))}
+
+                        {activeRow === row?._id && (
+                          <div>
+                            {innerData?.module?.map((row, index) => (
+                              <div
+                                key={row?._id}
+                                className="mb-1 pointer"
+                                onClick={() => toggleInnerModule(row)}>
+                                <div
+                                  className={`${
+                                    activeModuleRow === row?._id
+                                      ? checkData.includes(row?._id)
+                                        ? "pt-2 pb-2 green_bg color_white pl-3 pr-3"
+                                        : "pt-2 pb-2 site_bg color_white pl-3 pr-3"
+                                      : "white_bg color_black pl-3 pr-3 pt-2 pb-2"
+                                  }`}
+                                  style={{
+                                    // overflow: "hidden",
+                                    // textOverflow: "ellipsis",
+                                    // whiteSpace: "nowrap",
+                                    display: "flex",
+                                    // alignItems: "center",
+                                    // justifyContent: "space-between",
+                                  }}>
+                                  <div>{index + 1}</div> &nbsp;:&nbsp;
+                                  <div
+                                    style={{
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      whiteSpace: "nowrap",
+                                    }}>
+                                    {row?.title}
+                                  </div>
+                                  {/* {row?.title?.length > 45
+                                    ? row?.title.substring(0, 45) + "..."
+                                    : row?.title} */}
+                                  <div>
+                                    {checkData.includes(row?._id) && (
+                                      <i
+                                        className="fa fa-check-circle"
+                                        style={{
+                                          fontSize: "20px",
+                                          float: "right",
+                                          margin: "3px 0px 0px 0",
+                                        }}></i>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            <div className="col-lg-6 mt-2">
+            <div className={!showContent ? "col-xl-12 mt-2" : "col-xl-8 mt-2"}>
               <div className="col-lg-12">
                 <div className="main_tab_content">
                   <div className="tab-content">
                     <div className="mb-3 site_bg pr-3 pl-3 pt-1 pb-1 color_white heading_tabs">
+                      <div className="switch_toggle">
+                        <Switch
+                          onChange={toggleContent}
+                          checked={showContent}
+                          height={20}
+                          width={40}
+                          handleDiameter={22}
+                          onColor="#4d4f5c"
+                        />
+                      </div>
                       <div>
                         <button
                           className="color_white"
@@ -507,42 +583,18 @@ const EmpCourseModulesIndex = () => {
                       {data?.name}
                     </div>
                     <div
-                      // style={{ minHeight: "1200px" }}
-                      className="module-description"
+                      className={
+                        isZoomed
+                          ? "zoomed-module-description"
+                          : "module-description"
+                      }
                       ref={contentRef}>
-                      {isZoomed ? (
-                        <>
-                          <div className="mb-2 mt-5 site_bg pr-3 pl-3 pt-1 pb-1 color_white heading_tabs text-center">
-                            <div>
-                              <button
-                                className="color_white"
-                                onClick={toggleFullscreen}
-                                disabled={activeRowModule === ""}
-                                style={{
-                                  float: "right",
-                                  cursor: "pointer",
-                                  border: "none",
-                                  background: "none",
-                                }}>
-                                &nbsp;<i className="fas fa-search-minus"></i>
-                              </button>
-                            </div>
-                            {data?.name}
-                          </div>
-                        </>
-                      ) : (
-                        <></>
-                      )}
-
                       <div
                         className={
                           isZoomed
-                            ? "description1 white_bg p-3 text-center"
-                            : "description white_bg p-3 text-center"
-                        }
-                        // className="description white_bg p-3 text-center"
-                        // style={{ minHeight: "400px" }}
-                      >
+                            ? "description1 white_bg  text-center gd_2"
+                            : "description white_bg  text-center"
+                        }>
                         {!activeRowModule ? (
                           <>
                             <img
@@ -553,20 +605,177 @@ const EmpCourseModulesIndex = () => {
                           </>
                         ) : (
                           <>
-                            {currentDescriptions &&
-                              currentDescriptions?.length > 0 &&
-                              currentDescriptions?.map((desc, index) => (
-                                <div
-                                  className={isZoomed ? "zoomed_disc" : ""}
-                                  key={index}
-                                  dangerouslySetInnerHTML={{
-                                    __html: desc,
-                                  }}></div>
-                              ))}
+                            <div className="d-flex justify-content-between align-items-center">
+                              {currentDescriptions &&
+                                currentDescriptions?.length > 0 &&
+                                currentDescriptions?.map((desc, index) => (
+                                  <div
+                                    className={isZoomed ? "zoomed_disc" : ""}
+                                    // onMouseEnter={handleMouseEnter}
+                                    // onMouseLeave={handleMouseLeave}
+                                    onClick={handleClick}
+                                    key={index}
+                                    dangerouslySetInnerHTML={{
+                                      __html: desc,
+                                    }}></div>
+                                ))}
+                              {isZoomed ? (
+                                <>
+                                  {isHovered ? (
+                                    <div className="other-content">
+                                      {/* Title Start */}
+                                      <>
+                                        <div
+                                          className={
+                                            isZoomed
+                                              ? "site_bg pr-3 pl-3 pt-1 pb-1 color_white heading_tabs text-center gd_1"
+                                              : "mb-2 mt-3 site_bg pr-3 pl-3 pt-1 pb-1 color_white heading_tabs text-center"
+                                          }>
+                                          <div>
+                                            <button
+                                              className="color_white"
+                                              onClick={toggleFullscreen}
+                                              disabled={activeRowModule === ""}
+                                              style={{
+                                                float: "right",
+                                                cursor: "pointer",
+                                                border: "none",
+                                                background: "none",
+                                              }}>
+                                              &nbsp;
+                                              <i className="fas fa-search-minus"></i>
+                                            </button>
+                                          </div>
+                                          {data?.name}
+                                        </div>
+                                      </>
+                                      {/* Title End */}
+                                      {/*Start Next And Pre */}
+                                      <p
+                                        onClick={prevRow}
+                                        className="px-2 py-3 rounded m-2 text-center cursor"
+                                        style={{
+                                          float: "left",
+                                          cursor: "pointer",
+                                          position: "inherit",
+                                          top: "50%",
+                                        }}>
+                                        <i className="fas fa-solid fa-chevron-left"></i>
+                                      </p>
+                                      <p
+                                        onClick={nextRow}
+                                        className="px-2 py-3 rounded m-2 text-center cursor"
+                                        style={{
+                                          float: "right",
+                                          cursor: "pointer",
+                                          position: "inherit",
+                                          top: "50%",
+                                          right: "0",
+                                        }}>
+                                        <i className="fas fa-solid fa-chevron-right"></i>
+                                      </p>
+                                      {/* End Next Pre */}
+
+                                      {/* Start ProgressBar and Inner Pagination */}
+                                      <div className=" zoommed_courses_progress">
+                                        <div
+                                          className="d-flex align-items-center justify-content-center  mt-1 rounded-pill gd_3"
+                                          style={{
+                                            background: "#fff",
+                                            padding: "5px",
+                                            boxShadow: "inset 0px 0px 5px 0px",
+                                            borderRadius: "25px",
+                                          }}>
+                                          {Array.from({
+                                            length: totalDescriptionPages,
+                                          })?.map((_, index) => (
+                                            <button
+                                              key={index}
+                                              onClick={() =>
+                                                handleDescriptionPageChange(
+                                                  index + 1
+                                                )
+                                              }
+                                              className={`round-border ${
+                                                descriptionPage === index + 1
+                                                  ? "active"
+                                                  : ""
+                                              }`}>
+                                              {index + 1}
+                                            </button>
+                                          ))}
+                                        </div>
+
+                                        <div className="white_bg px-3 mt-1 mb-1 rounded gd_4">
+                                          <div className="progress_view">
+                                            <div className="row  text-center">
+                                              <div className="col-lg-2 mt-2">
+                                                <b className="color_orange">
+                                                  Module Progress
+                                                </b>
+                                              </div>
+                                              <div className="col-lg-10 flex">
+                                                <div className="row">
+                                                  <div
+                                                    // className="col-lg-2 mt-2"
+                                                    className={
+                                                      isZoomed
+                                                        ? "col-lg-1 mt-2"
+                                                        : "col-lg-2 mt-2"
+                                                    }>
+                                                    <label>
+                                                      <span>
+                                                        {calculateCourseProgress(
+                                                          allModuleDecription,
+                                                          courseId,
+                                                          courseModuleId
+                                                        )}{" "}
+                                                        %
+                                                      </span>
+                                                    </label>
+                                                  </div>
+                                                  <div
+                                                    // className="col-lg-10 mt-3"
+                                                    className={
+                                                      isZoomed
+                                                        ? "col-lg-11 mt-3"
+                                                        : "col-lg-10 mt-3 "
+                                                    }>
+                                                    <div
+                                                      className="progress"
+                                                      style={{ width: "100%" }}>
+                                                      <div
+                                                        className="zoomed_progress-bar orange"
+                                                        style={{
+                                                          width: `${calculateCourseProgress(
+                                                            allModuleDecription,
+                                                            courseId,
+                                                            courseModuleId
+                                                          )}%`,
+                                                        }}></div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      {/* End ProgressBar and Inner Pagination */}
+                                    </div>
+                                  ) : (
+                                    <></>
+                                  )}
+                                </>
+                              ) : (
+                                <></>
+                              )}
+                            </div>
                           </>
                         )}
                       </div>
-                      
+                    </div>
+
                     <div
                       className="description-pagination"
                       style={{
@@ -591,33 +800,51 @@ const EmpCourseModulesIndex = () => {
                       )}
                     </div>
 
-                    <div className="courses_progress white_bg p-3 mt-3">
+                    <div className="white_bg px-3 mt-1 mb-1 rounded gd_4">
                       <div className="progress_view">
-                        <div className="row">
-                          <div className="col-lg-2 mt-3">
+                        <div className="row  text-center">
+                          <div className="col-lg-2 mt-2">
                             <b className="color_orange">Module Progress</b>
                           </div>
-                          <div className="col-lg-10">
-                            <label>
-                              <span>
-                                {calculateCourseProgress(
-                                  allModuleDecription,
-                                  courseId,
-                                  courseModuleId
-                                )}{" "}
-                                %
-                              </span>
-                            </label>
-                            <div className="progress" style={{ width: "100%" }}>
+                          <div className="col-lg-10 flex">
+                            <div className="row">
                               <div
-                                className="progress-bar orange"
-                                style={{
-                                  width: `${calculateCourseProgress(
-                                    allModuleDecription,
-                                    courseId,
-                                    courseModuleId
-                                  )}%`,
-                                }}></div>
+                                // className="col-lg-2 mt-2"
+                                className={
+                                  isZoomed ? "col-lg-1 mt-2" : "col-lg-2 mt-2"
+                                }>
+                                <label>
+                                  <span>
+                                    {calculateCourseProgress(
+                                      allModuleDecription,
+                                      courseId,
+                                      courseModuleId
+                                    )}{" "}
+                                    %
+                                  </span>
+                                </label>
+                              </div>
+                              <div
+                                // className="col-lg-10 mt-3"
+                                className={
+                                  isZoomed
+                                    ? "col-lg-11 mt-3"
+                                    : "col-lg-10 mt-3 "
+                                }>
+                                <div
+                                  className="progress"
+                                  style={{ width: "100%" }}>
+                                  <div
+                                    className="zoomed_progress-bar orange"
+                                    style={{
+                                      width: `${calculateCourseProgress(
+                                        allModuleDecription,
+                                        courseId,
+                                        courseModuleId
+                                      )}%`,
+                                    }}></div>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -646,239 +873,160 @@ const EmpCourseModulesIndex = () => {
                         </div>
                       </div>
                     </div>
-                    </div>
-
-                    {/* <div
-                      className="description-pagination"
-                      style={{
-                        background: "#fff",
-                        padding: "5px",
-                        boxShadow: "inset 0px 0px 5px 0px",
-                        borderRadius: "25px",
-                      }}>
-                      {Array.from({ length: totalDescriptionPages })?.map(
-                        (_, index) => (
-                          <button
-                            key={index}
-                            onClick={() =>
-                              handleDescriptionPageChange(index + 1)
-                            }
-                            className={`round-border ${
-                              descriptionPage === index + 1 ? "active" : ""
-                            }`}>
-                            {index + 1}
-                          </button>
-                        )
-                      )}
-                    </div>
-
-                    <div className="courses_progress white_bg p-3 mt-3">
-                      <div className="progress_view">
-                        <div className="row">
-                          <div className="col-lg-2 mt-3">
-                            <b className="color_orange">Module Progress</b>
-                          </div>
-                          <div className="col-lg-10">
-                            <label>
-                              <span>
-                                {calculateCourseProgress(
-                                  allModuleDecription,
-                                  courseId,
-                                  courseModuleId
-                                )}{" "}
-                                %
-                              </span>
-                            </label>
-                            <div className="progress" style={{ width: "100%" }}>
-                              <div
-                                className="progress-bar orange"
-                                style={{
-                                  width: `${calculateCourseProgress(
-                                    allModuleDecription,
-                                    courseId,
-                                    courseModuleId
-                                  )}%`,
-                                }}></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="col-lg-12 mt-2">
-                      <div className="row black_bg mt-4 p-2">
-                        <div className="col-lg-6">
-                          <p
-                            onClick={prevRow}
-                            className="color_white"
-                            style={{ float: "left", cursor: "pointer" }}>
-                            <i className="fas fa-solid fa-chevron-left"></i>{" "}
-                            &nbsp; Previous
-                          </p>
-                        </div>
-                        <div className="col-lg-6">
-                          <p
-                            onClick={nextRow}
-                            className="color_white"
-                            style={{ float: "right", cursor: "pointer" }}>
-                            Next &nbsp;{" "}
-                            <i className="fas fa-solid fa-chevron-right"></i>
-                          </p>
-                        </div>
-                      </div>
-                    </div> */}
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="col-lg-3 mt-2">
-              <section className="">
-                <div className="enrollment_tab">
-                  <ul className="nav nav-tabs">
-                    <li className="nav-item">
-                      <a
-                        className={`nav-link ${
-                          activeTab === "newnotes"
-                            ? "is_active"
-                            : "isnot_active"
-                        }`}
-                        data-toggle="tab"
-                        href="#newnotes"
-                        onClick={() => handleTabClick("newnotes")}>
-                        New Note &nbsp;
-                        <i className="far fa-newspaper"></i>
-                      </a>
-                    </li>{" "}
-                    &nbsp; &nbsp;
-                    <li className="nav-item">
-                      <a
-                        className={`nav-link ${
-                          activeTab === "savenotes"
-                            ? "is_active"
-                            : "isnot_active"
-                        }`}
-                        data-toggle="tab"
-                        href="#savenotes"
-                        onClick={() => handleTabClick("savenotes")}>
-                        Saved Notes
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <div className="tab-content">
-                  <div
-                    className={`tab-pane container p-0 ${
-                      activeTab === "newnotes" ? "active" : ""
-                    }`}
-                    id="newnotes">
-                    <div className="rgst_form p-3 ">
-                      <div className="additional-links">
-                        <textarea
-                          style={{
-                            height: "200px",
-                            width: "100%",
-                            border: "1px solid white",
-                          }}
-                          value={newNotesContent}
-                          onChange={(e) => setNewNotesContent(e.target.value)}
-                          placeholder="New Notes"></textarea>
-                      </div>
-                      <button
-                        className="btn btn-primary btn-sm mt-2"
-                        onClick={handleSaveNotes}
-                        // onClick={() => handleSaveNotes(activeTab)}
-                        disabled={activeRowModule === ""}>
-                        Save
-                      </button>
-                    </div>
+            {showContent && (
+              <div className="col-xl-2 mt-2">
+                <section className="">
+                  <div className="enrollment_tab">
+                    <ul className="nav nav-tabs">
+                      <li className="nav-item">
+                        <a
+                          className={`nav-link ${
+                            activeTab === "newnotes"
+                              ? "is_active"
+                              : "isnot_active"
+                          }`}
+                          data-toggle="tab"
+                          href="#newnotes"
+                          onClick={() => handleTabClick("newnotes")}>
+                          New Note &nbsp;
+                          <i className="far fa-newspaper"></i>
+                        </a>
+                      </li>{" "}
+                      &nbsp; &nbsp;
+                      <li className="nav-item">
+                        <a
+                          className={`nav-link ${
+                            activeTab === "savenotes"
+                              ? "is_active"
+                              : "isnot_active"
+                          }`}
+                          data-toggle="tab"
+                          href="#savenotes"
+                          onClick={() => handleTabClick("savenotes")}>
+                          Saved Notes
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="tab-content">
                     <div
-                      className={`white_bg mt-4 pl-4 pt-3 pb-2 ${
-                        activeRowModule === "" ? "disabled" : ""
+                      className={`tab-pane container p-0 ${
+                        activeTab === "newnotes" ? "active" : ""
                       }`}
-                      style={{
-                        opacity: activeRowModule === "" ? 0.4 : 1,
-                        border: "2px solid #4848487d",
-                        borderRadius: "15px",
-                      }}>
-                      <span style={{ position: "relative", top: "-7px" }}>
-                        add tags :
-                      </span>
-                      <span
-                        className={`green_bg add_notes_dot ml-3 ${
-                          activeTag === "green" ? "add_notes_dot_active" : ""
+                      id="newnotes">
+                      <div className="rgst_form p-3 ">
+                        <div className="additional-links">
+                          <textarea
+                            style={{
+                              height: "200px",
+                              width: "100%",
+                              border: "1px solid white",
+                            }}
+                            value={newNotesContent}
+                            onChange={(e) => setNewNotesContent(e.target.value)}
+                            placeholder="New Notes"></textarea>
+                        </div>
+                        <button
+                          className="btn btn-primary btn-sm mt-2"
+                          onClick={handleSaveNotes}
+                          // onClick={() => handleSaveNotes(activeTab)}
+                          disabled={activeRowModule === ""}>
+                          Save
+                        </button>
+                      </div>
+                      <div
+                        className={`white_bg mt-4 pl-4 pt-3 pb-2 ${
+                          activeRowModule === "" ? "disabled" : ""
                         }`}
-                        onClick={() => handleTagClick("green")}>
-                        &nbsp;
-                      </span>{" "}
-                      <span
-                        className={`orange add_notes_dot ml-3 ${
-                          activeTag === "orange" ? "add_notes_dot_active" : ""
-                        }`}
-                        onClick={() => handleTagClick("orange")}>
-                        &nbsp;
-                      </span>{" "}
-                      <span
-                        className={`purple add_notes_dot ml-3 ${
-                          activeTag === "purple" ? "add_notes_dot_active" : ""
-                        }`}
-                        onClick={() => handleTagClick("purple")}>
-                        &nbsp;
-                      </span>{" "}
-                      <span
-                        className={`bg-primary add_notes_dot ml-3 ${
-                          activeTag === "bg-primary"
-                            ? "add_notes_dot_active"
-                            : ""
-                        }`}
-                        onClick={() => handleTagClick("bg-primary")}>
-                        &nbsp;
-                      </span>{" "}
+                        style={{
+                          opacity: activeRowModule === "" ? 0.4 : 1,
+                          border: "2px solid #4848487d",
+                          borderRadius: "15px",
+                        }}>
+                        <span style={{ position: "relative", top: "-7px" }}>
+                          add tags :
+                        </span>
+                        <span
+                          className={`green_bg add_notes_dot ml-3 ${
+                            activeTag === "green" ? "add_notes_dot_active" : ""
+                          }`}
+                          onClick={() => handleTagClick("green")}>
+                          &nbsp;
+                        </span>{" "}
+                        <span
+                          className={`orange add_notes_dot ml-3 ${
+                            activeTag === "orange" ? "add_notes_dot_active" : ""
+                          }`}
+                          onClick={() => handleTagClick("orange")}>
+                          &nbsp;
+                        </span>{" "}
+                        <span
+                          className={`purple add_notes_dot ml-3 ${
+                            activeTag === "purple" ? "add_notes_dot_active" : ""
+                          }`}
+                          onClick={() => handleTagClick("purple")}>
+                          &nbsp;
+                        </span>{" "}
+                        <span
+                          className={`bg-primary add_notes_dot ml-3 ${
+                            activeTag === "bg-primary"
+                              ? "add_notes_dot_active"
+                              : ""
+                          }`}
+                          onClick={() => handleTagClick("bg-primary")}>
+                          &nbsp;
+                        </span>{" "}
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    className={`tab-pane container p-0 ${
-                      activeTab === "savenotes" ? "active" : ""
-                    }`}
-                    id="savenotes">
                     <div
-                      className="rgst_form p-3"
-                      style={{ minHeight: "285px" }}>
-                      <div className="additional-links mb-3">
-                        {result.map((entry) => (
-                          <div key={entry.module}>
-                            {entry.notes.map((note, index) => (
-                              <div key={note._id}>
-                                <>{index + 1}</> : <>{note.note}</>
-                                <div style={{ float: "right" }}>
-                                  <a
-                                    href="#"
-                                    style={{ color: "blue" }}
-                                    onClick={() => handleEdit(note)}>
-                                    <i className="fas fa-edit"></i> Edit
-                                  </a>{" "}
-                                  &nbsp;&nbsp;
-                                  <a
-                                    href="#"
-                                    style={{ color: "red" }}
-                                    onClick={() => {
-                                      setDeleteModalOpen(true);
-                                      setSelectedNote(note);
-                                    }}>
-                                    <i className="fas fa-trash"></i> Delete
-                                  </a>
-                                </div>{" "}
-                                <hr />
-                              </div>
-                            ))}
-                          </div>
-                        ))}
+                      className={`tab-pane container p-0 ${
+                        activeTab === "savenotes" ? "active" : ""
+                      }`}
+                      id="savenotes">
+                      <div
+                        className="rgst_form p-3"
+                        style={{ minHeight: "285px" }}>
+                        <div className="additional-links mb-3">
+                          {result.map((entry) => (
+                            <div key={entry.module}>
+                              {entry.notes.map((note, index) => (
+                                <div key={note._id}>
+                                  <>{index + 1}</> : <>{note.note}</>
+                                  <div style={{ float: "right" }}>
+                                    <a
+                                      href="#"
+                                      style={{ color: "blue" }}
+                                      onClick={() => handleEdit(note)}>
+                                      <i className="fas fa-edit"></i> Edit
+                                    </a>{" "}
+                                    &nbsp;&nbsp;
+                                    <a
+                                      href="#"
+                                      style={{ color: "red" }}
+                                      onClick={() => {
+                                        setDeleteModalOpen(true);
+                                        setSelectedNote(note);
+                                      }}>
+                                      <i className="fas fa-trash"></i> Delete
+                                    </a>
+                                  </div>{" "}
+                                  <hr />
+                                </div>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </section>
-            </div>
+                </section>
+              </div>
+            )}
           </div>
         </div>
       </section>

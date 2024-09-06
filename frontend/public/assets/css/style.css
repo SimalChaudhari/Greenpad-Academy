@@ -2462,7 +2462,8 @@ input[type="number"] {
 }
 
 .module-description, .description p{
-overflow: auto;
+/* overflow: auto; */
+overflow: hidden;
 }
 
 .company-dropdown {
@@ -2515,15 +2516,115 @@ overflow: auto;
 
 .zoomed_disc {
     display: flex;
-    /* height: 950px; */
-    /* width: 100%; */
-    /* min-height: 433px; */
     align-items: center;
     justify-content: center;
 }
 
+.zoomed_disc {
+    position: relative;
+    z-index: 1; 
+  }
+  
+  .other-content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2;
+    /* background-color: #f1f1f1; */
+    padding: 10px;
+    /* text-align: center; */
+  }
+  .zoomed_progress-bar{
+    height: 8px;
+  }
+  /* Style for the title */
+  .heading-tabs {
+    margin: 0;
+  }
+  .progress {
+    height: 0.5rem !important;
+}
+
+  /* Style for the navigation buttons */
+  .px-2 {
+    padding: 0.5rem;
+  }
+  
+  /* Style for the progress bar and inner pagination */
+  .zoommed_courses_progress {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2;
+    padding: 10px;
+  }
+  
 .description1 img {
     display: flex;
-    /* height: 980px;
-    width: 1920px; */
+    max-width: 100%;
+    object-fit: fill;
 }
+
+.cursor{
+    background-color: #888;
+    color: #fff;
+    align-items: center;
+    justify-content: center;
+}
+
+.show-hover {
+    /* Add your styles for the hover effect here */
+    background-color: #e0e0e0; /* Example background color */
+    /* Add any other styles you want to apply when hovered */
+  }
+  .zoomed-module-description{
+    display: grid;
+  }
+  .zoomed_out_btn{
+    float: right;
+  }
+ 
+  .gd_2{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Toggle  */
+  /* .switch_toggle{
+    float: left;
+    cursor: pointer;
+    border: none;
+    background: none;
+    margin-right: 10px;
+    margin-top: 4px;
+  }
+  .switch_toggle:hover{
+    content: "Your message here"; 
+  } */
+  .switch_toggle {
+    float: left;
+    cursor: pointer;
+    border: none;
+    background: none;
+    margin-right: 10px;
+    margin-top: 4px;
+    position: relative; /* Required for positioning the tooltip */
+  }
+  
+  .switch_toggle:hover::after {
+    content: "Hide Chapters and Notes"; 
+    position: absolute;
+    top: 100%; 
+    left: 50%; 
+    transform: translateX(-27%); 
+    font-size: small;
+    background-color: #333;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    white-space: nowrap; 
+  }
+  
