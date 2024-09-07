@@ -446,7 +446,7 @@ const EmpCourseModulesIndex = () => {
                 <div className="main_tab_content">
                   <div className="tab-content">
                     <div className="mb-2 pt-3 black_bg pr-3 pl-3 pt-1 pb-3 color_white heading_tabs text-center">
-                      CHAPTERS
+                     Modules
                     </div>
                     <div></div>
 
