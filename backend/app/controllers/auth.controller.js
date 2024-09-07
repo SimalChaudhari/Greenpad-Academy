@@ -75,13 +75,17 @@ exports.login = async (req, res) => {
 
     const authorities = user.company_name ? user.company_name : user.first_name + ' ' + user.last_name;
 
+    // Send response
     res.status(200).json({
-      id: user._id,
-      username: authorities,
-      email: user.email,
-      role: user.role,
-      token,
+      user: {
+        id: user._id,
+        username: authorities,
+        email: user.email,
+        role: user.role
+      },
+      token: token
     });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Login failed." });

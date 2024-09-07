@@ -2,7 +2,7 @@ import { paths } from 'src/routes/paths';
 
 import axios from 'src/utils/axios';
 
-import { STORAGE_KEY } from './constant';
+import { STORAGE_KEY, STORAGE_USER } from './constant';
 
 // ----------------------------------------------------------------------
 
@@ -69,10 +69,19 @@ export function tokenExpired(exp) {
 
 // ----------------------------------------------------------------------
 
-export async function setSession(accessToken) {
+export async function setSession(accessToken, user) {
   try {
     if (accessToken) {
       sessionStorage.setItem(STORAGE_KEY, accessToken);
+      // Convert the user object to a string and store it in sessionStorage
+      const userData = {
+        id: user?.id,
+        username: user?.username,
+        email: user?.email,
+        role: user?.role
+      };
+      sessionStorage.setItem(STORAGE_USER, JSON.stringify(userData));
+
 
       axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 

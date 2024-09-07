@@ -33,6 +33,7 @@ export const fetcher = async (args) => {
 export const endpoints = {
   auth: {
     me: '/api/employee',
+    
     signIn: '/api/auth/login',
     signUp: '/api/auth/sign-up',
     google: {
