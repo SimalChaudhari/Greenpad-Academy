@@ -2,43 +2,37 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Formik } from 'formik';
 import { Link } from 'react-router-dom';
-import {login} from './../../redux/actions/authActions';
+import { login } from './../../redux/actions/authActions';
 import { toast } from 'react-toastify';
-// import rootReducer from '../../redux/reducers/index'
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import './SignIn.css'; // Create a separate CSS file for custom styling
 
 function SignIn() {
-  
   const navigate = useNavigate();
-
-  const navigatePage = (path) => {
-    navigate(path);
-  };
-  
   const dispatch = useDispatch();
+
   const handleSubmit = async (values) => {
     try {
-      // Dispatch the login action with the form values
       const data = await dispatch(login(values));
-      if(data) {
-        toast.success("Login Successfull!");
-        navigatePage("/")
+      if (data) {
+        toast.success('Login Successful!');
+        navigate('/');
       }
     } catch (error) {
-      toast.error("Login Failed!");
+      toast.error('Login Failed!');
     }
   };
 
   return (
-    <section className="register_page">
-      <div className="container">
-        <div className="row">
-          <div className="col-lg-9 col-md-9 mx-auto">
-            <div className="register_eroll">
-              <h3 className="mb-4 p-2 site_bg color_white text-uppercase">Login</h3>
+    <section className="sign-in-section">
+      <div className="container h-100">
+        <div className="row justify-content-center align-items-center h-100">
+          <div className="col-lg-6 col-md-8">
+            <div className="card shadow p-4">
+              <h3 className="mb-4 text-center text-uppercase">Login</h3>
               <div className="tab-content">
                 <div className="tab-pane container active p-0">
-                  <div className="register_form pl-5 pr-5 pb-4 pt-2">
+                  <div className="register_form pb-4 pt-2">
                     <Formik
                       initialValues={{ email: '', password: '' }}
                       validate={(values) => {
@@ -57,7 +51,7 @@ function SignIn() {
                       }}
                       onSubmit={(values, { setSubmitting }) => {
                         setTimeout(() => {
-                          handleSubmit(values)
+                          handleSubmit(values);
                           setSubmitting(false);
                         }, 400);
                       }}
@@ -72,60 +66,52 @@ function SignIn() {
                         isSubmitting,
                       }) => (
                         <form onSubmit={handleSubmit}>
-                          <div className="row">
-                            <div className="col-lg-12">
-                              <div className="form-group">
-                                <label className="d-block">Email Address <span className="require" >*</span></label>
-                                <input
-                                  type="email"
-                                  name="email"
-                                  value={values.email}
-                                  onBlur={handleBlur}
-                                  onChange={handleChange}
-                                  placeholder="Email Address"
-                                  className={errors.email && touched.email ? 'error' : ''}
-                                />
-                                {errors.email && touched.email && (
-                                  <div className="input-feedback">{errors.email}</div>
-                                )}
-                              </div>
-                            </div>
-                            <div className="col-lg-12">
-                              <div className="form-group">
-                                <label className="d-block">Password <span className="require" >*</span></label>
-                                <input
-                                  type="password"
-                                  name="password"
-                                  value={values.password}
-                                  onBlur={handleBlur}
-                                  onChange={handleChange}
-                                  placeholder="Password"
-                                  className={errors.password && touched.password ? 'error' : ''}
-                                />
-                                {errors.password && touched.password && (
-                                  <div className="input-feedback">{errors.password}</div>
-                                )}
-                              </div>
-                            </div>
-                            <div className="col-lg-12">
-                              <div className="form-btn text-center mt-3">
-                                <button
-                                  className="text-uppercase green_bg color_white"
-                                  type="submit"
-                                  disabled={isSubmitting}
-                                >
-                                  Sign In
-                                </button>
-                              </div>
-                            </div>
+                          <div className="form-group">
+                            <label>Email Address <span className="require">*</span></label>
+                            <input
+                              type="email"
+                              name="email"
+                              value={values.email}
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              placeholder="Email Address"
+                              className={`form-control ${errors.email && touched.email ? 'is-invalid' : ''}`}
+                            />
+                            {errors.email && touched.email && (
+                              <div className="invalid-feedback">{errors.email}</div>
+                            )}
+                          </div>
+                          <div className="form-group">
+                            <label>Password <span className="require">*</span></label>
+                            <input
+                              type="password"
+                              name="password"
+                              value={values.password}
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              placeholder="Password"
+                              className={`form-control ${errors.password && touched.password ? 'is-invalid' : ''}`}
+                            />
+                            {errors.password && touched.password && (
+                              <div className="invalid-feedback">{errors.password}</div>
+                            )}
+                          </div>
+                          <div className="form-btn text-center mt-4">
+                            <button
+                              className="btn btn-primary btn-block text-uppercase"
+                              type="submit"
+                              disabled={isSubmitting}
+                            >
+                              Sign In
+                            </button>
                           </div>
                         </form>
                       )}
                     </Formik>
-                    <div className="additional-links">
-                      <Link to="/forgot-password">Forgot Password</Link>
+                    <div className="text-center mt-3">
+                      <Link to="/forgot-password">Forgot Password?</Link>
                       <span className="separator"> | </span>
-                      <Link to="/registration">Registration</Link>
+                      <Link to="/registration">Register</Link>
                     </div>
                   </div>
                 </div>

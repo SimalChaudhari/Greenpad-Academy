@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Formik } from 'formik';
 import { useDispatch } from 'react-redux';
 import { forgotPassword } from './../../redux/actions/authActions';
+import './SignIn.css';
 
 function ForgotPassword() {
   const dispatch = useDispatch();
@@ -17,15 +18,15 @@ function ForgotPassword() {
   }
 
   return (
-    <section className="register_page">
-      <div className="container">
-        <div className="row">
-          <div className="col-lg-9 col-md-9 mx-auto">
-            <div className="register_eroll">
-              <h3 className="mb-4 p-2 site_bg color_white text-uppercase">Forgot Password</h3>
-              <div className="tab-content">
-                <div className="tab-pane container active p-0">
-                  <div className="register_form pl-5 pr-5 pb-4 pt-2">
+    <section className="sign-in-section">
+    <div className="container h-100">
+      <div className="row justify-content-center align-items-center h-100">
+        <div className="col-lg-6 col-md-8">
+          <div className="card shadow p-4">
+            <h3 className="mb-4 text-center text-uppercase">Forgot Password</h3>
+            <div className="tab-content">
+              <div className="tab-pane container active p-0">
+                <div className="register_form pb-4 pt-2">
                     <Formik
                       initialValues={{ email: '' }}
                       validate={(values) => {
@@ -73,7 +74,7 @@ function ForgotPassword() {
                             <div className="col-lg-12">
                               <div className="form-btn text-center mt-3">
                                 <button
-                                  className="text-uppercase green_bg color_white"
+                                  className="btn btn-primary btn-block text-uppercase"
                                   type="submit"
                                   disabled={isSubmitting}
                                 >
@@ -85,7 +86,7 @@ function ForgotPassword() {
                         </form>
                       )}
                     </Formik>
-                    <div className="additional-links">
+                    <div className="text-center mt-3">
                       <Link to="/login">Login</Link>
                       <span className="separator"> | </span>
                       <Link to="/registration">Registration</Link>

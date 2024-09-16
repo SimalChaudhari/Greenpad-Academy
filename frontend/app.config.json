@@ -1,10 +1,10 @@
 {
-    apps : [
+    "apps" : [
       {
-        name      : "Greenpad-Academy-Frontend",
-        script    : "npx",
-        interpreter: "none",
-        args: "serve -s build -p 3001"
+        "name"      : "Greenpad-Academy-Frontend",
+        "script"    : "npx",
+        "interpreter": "none",
+        "args": "serve -s build -p 3001"
       }
     ]
 }

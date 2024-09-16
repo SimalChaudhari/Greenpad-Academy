@@ -1,0 +1,57 @@
+.sign-in-section {
+    background: url('https://img.freepik.com/free-photo/colorful-arrow-symbols-mobile-phone-pen-blue-backdrop_23-2147875665.jpg') no-repeat center center fixed; /* Replace with your image */
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .card {
+    background-color: rgba(255, 255, 255, 0.85); /* Semi-transparent background for the form */
+    border-radius: 10px;
+  }
+  
+  .form-group input {
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+  
+  .additional-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .additional-links a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .additional-links a:hover {
+    text-decoration: underline;
+  }
+  
+  .separator {
+    margin: 0 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .card {
+      padding: 20px;
+    }
+  
+    .form-group input {
+      padding: 8px;
+    }
+  
+    .btn {
+      padding: 10px;
+    }
+  }
+  

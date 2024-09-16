@@ -11,3 +11,86 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.register_page {
+  background: url('https://img.freepik.com/free-photo/colorful-arrow-symbols-mobile-phone-pen-blue-backdrop_23-2147875665.jpg') no-repeat center center fixed; /* Replace with your image */
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.register_eroll {
+  background-color: rgba(255, 255, 255, 0.9); /* Slight transparency for a modern effect */
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.register_form {
+  margin: 0 auto;
+  max-width: 500px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.form-group label {
+  font-weight: 600;
+}
+
+.error {
+  border-color: red;
+}
+
+.input-feedback {
+  color: red;
+  font-size: 0.85rem;
+}
+
+.form-btn button {
+  width: 100%;
+  padding: 10px;
+  background-color: #28a745;
+  border: none;
+  color: white;
+  text-transform: uppercase;
+  border-radius: 5px;
+}
+
+.form-btn button:hover {
+  background-color: #218838;
+}
+
+.additional-links {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.additional-links a {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.additional-links a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .register_form {
+    padding: 15px;
+  }
+
+  .register_eroll {
+    padding: 20px;
+  }
+}

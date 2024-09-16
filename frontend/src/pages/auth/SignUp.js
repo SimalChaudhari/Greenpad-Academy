@@ -12,7 +12,7 @@ function SignUp() {
   const handleRegistration = async (values, { setSubmitting }) => {
     try {
       const data = await register(values);
-      if(data) {
+      if (data) {
         toast.success("Registration Successfull!");
         navigate("/login")
       }
@@ -27,24 +27,16 @@ function SignUp() {
   };
 
   return (
-    <section className="register_page">
-      <div className="container">
-        <div className="row mt-5">
-          <div className="col-lg-9 col-md-9 mx-auto">
-            <div className="register_eroll">
-              <h3 className="mb-4 p-2 site_bg color_white text-uppercase">Registration</h3>
-              <div className="enrollment_tab">
-                <ul className="nav nav-tabs">
-                  <li className="nav-item">
-                    <a className="nav-link active white_bg" data-toggle="tab" href="#business">
-                      Company
-                    </a>
-                  </li>
-                </ul>
-              </div>
+    <section className="sign-in-section">
+      <div className="container h-100">
+        <div className="row justify-content-center align-items-center h-100">
+          <div className="col-lg-6 col-md-8">
+            <div className="card shadow p-4">
+              <h3 className="mb-4 text-center text-uppercase">Company Registration
+              </h3>
               <div className="tab-content">
-                <div className="tab-pane active container p-0" id="business">
-                  <div className="register_form pl-5 pr-5 pb-4 pt-2">
+                <div className="tab-pane container active p-0">
+                  <div className="register_form pb-4 pt-2">
                     <Formik
                       initialValues={{
                         email: '',
@@ -100,7 +92,6 @@ function SignUp() {
                         isSubmitting
                       }) => (
                         <form onSubmit={handleSubmit}>
-                          <h4 className="mb-3 pt-2 pb-2 text-uppercase">Business details</h4>
                           <div className="row">
                             <div className="col-lg-6">
                               <div className="form-group">
@@ -203,10 +194,11 @@ function SignUp() {
                                 )}
                               </div>
                             </div>
+                          
                             <div className="col-lg-12">
-                              <div className="form-btn text-center mt-3">
+                              <div className="form-btn text-center mt-4">
                                 <button
-                                  className="text-uppercase green_bg color_white"
+                                  className="btn btn-primary btn-block text-uppercase"
                                   type="submit"
                                   disabled={isSubmitting}
                                 >
@@ -218,7 +210,7 @@ function SignUp() {
                         </form>
                       )}
                     </Formik>
-                    <div className="additional-links">
+                    <div className="text-center mt-3">
                       <Link to="/login">Login</Link>
                     </div>
                     {registrationError && <div className="error-message">{registrationError}</div>}
