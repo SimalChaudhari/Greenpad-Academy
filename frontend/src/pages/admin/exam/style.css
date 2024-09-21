@@ -1,0 +1,75 @@
+.exam-page-section {
+    background-color: #f7f7f7;
+    padding: 40px 0;
+  }
+  
+  .exam-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #333;
+  }
+  
+  .exam-form {
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .question-block {
+    margin-bottom: 20px;
+  }
+  
+  .question-text {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+  
+  .form-check-label {
+    margin-left: 8px;
+    font-size: 1rem;
+  }
+  
+  .btn-block {
+    display: block;
+    width: 100%;
+    padding: 10px;
+  }
+  
+  .result-section {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .result-title {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #4CAF50;
+  }
+  
+  .result-score {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+  }
+  
+  .result-percentage {
+    font-size: 1.2rem;
+    color: #555;
+  }
+  
+  @media (max-width: 768px) {
+    .exam-form {
+      padding: 15px 20px;
+    }
+    
+    .exam-title {
+      font-size: 1.8rem;
+    }
+    
+    .result-title {
+      font-size: 1.6rem;
+    }
+  }
+  

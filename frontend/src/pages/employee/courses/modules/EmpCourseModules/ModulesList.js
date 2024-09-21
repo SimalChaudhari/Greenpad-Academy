@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaCheck } from "react-icons/fa"; // Importing a check icon from FontAwesome
+import { useNavigate } from "react-router-dom"; 
 
 const ModulesList = ({
   data,
@@ -14,7 +15,8 @@ const ModulesList = ({
   setExamSection // New prop to handle exam section click
 }) => {
   const [module, setModule] = useState(null);
-
+  const navigate = useNavigate();
+  
   const toggleModule = (row) => {
     const isSameRow = activeRow === row?._id;
     setActiveRow(isSameRow ? null : row?._id);
@@ -30,7 +32,8 @@ const ModulesList = ({
   };
 
   const handleExamClick = (moduleId) => {
-    setExamSection(moduleId);
+    // Redirect to the exam page with the moduleId
+    navigate(`/exam/${moduleId}`);
   };
 
   return (

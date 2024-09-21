@@ -58,6 +58,7 @@ import ViewModelCompanyForm from "./pages/company/viewModelForm";
 import ViewModelCourseForm from "./pages/courses/viewModelForm";
 import Modules from "./pages/admin/courses/modules/index";
 import SubModules from "./pages/admin/courses/modulesArray/index";
+import ExamPage from './pages/admin/exam';
 import { ROLES } from "./config/roles";
 import NotFound from "./pages/NotFound";
 
@@ -288,7 +289,7 @@ function App() {
                 />
                 <Route
                   path="/exam/:moduleId"
-                  element={<PrivateRoute element={EmployeeResetPassword} />}
+                  element={<PrivateRoute element={ExamPage} />}
                 />
                 <Route path="*" element={<NotFound />} />
               </>
