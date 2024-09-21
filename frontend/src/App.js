@@ -34,7 +34,7 @@ import Certificates from "./pages/employee/reports/Certificates";
 import SustainablePlan2 from "./pages/employee/reports/SustainablePlan2";
 import EmployeeHome from "./pages/employee/Home/Home";
 import EmpModulesIndex from "./pages/employee/courses/modules";
-import EmpCourseModulesIndex from "./pages/employee/courses/modules/sunmoduleindex";
+import EmpCourseModulesIndex from "./pages/employee/courses/modules/EmpCourseModules/index";
 
 import Reading from "./pages/employee/myAcademy/Reading";
 import SavedNotes from "./pages/employee/myAcademy/SavedNotes";
@@ -284,6 +284,10 @@ function App() {
                 />
                 <Route
                   path="/employee/reset-password/:id"
+                  element={<PrivateRoute element={EmployeeResetPassword} />}
+                />
+                <Route
+                  path="/exam/:moduleId"
                   element={<PrivateRoute element={EmployeeResetPassword} />}
                 />
                 <Route path="*" element={<NotFound />} />

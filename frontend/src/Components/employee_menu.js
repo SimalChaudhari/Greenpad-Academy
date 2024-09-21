@@ -5,78 +5,27 @@ function EmployeeMenu() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
+  // Helper function to create menu items
+  const createMenuItem = (label, path, activePaths = []) => {
+    const isActive = pathname === path || activePaths.some(ap => pathname.startsWith(ap));
+    return (
+      <li className={`nav-item ${isActive ? "active" : ""}`}>
+        <a className="nav-link" onClick={() => navigate(path)}>
+          {label}
+        </a>
+      </li>
+    );
+  };
+
   return (
     <>
-      <li
-        className={
-          pathname === "/my-academy" ||
-          pathname === "/saved-notes" ||
-          pathname === "/my-profile"
-            ? `nav-item active`
-            : `nav-item`
-        }>
-        <a
-          className="nav-link"
-          onClick={() => {
-            navigate("/my-academy");
-          }}>
-          My Academy
-        </a>
-      </li>
-
-      <li
-        className={
-          pathname === "/employee/reports" ||
-          pathname === "/employee/certificates" ||
-          pathname === "/employee/sustainable-plan-2"
-            ? `nav-item active`
-            : `nav-item`
-        }>
-        <a
-          className="nav-link"
-          onClick={() => {
-            navigate("/employee/reports");
-          }}>
-          Reports
-        </a>
-      </li>
-
-      {/* <li className={pathname === '/employee/tracking-dashboard' ? `nav-item active` : `nav-item`}>
-                <a
-                    className="nav-link"
-                    onClick={() => { navigate("/employee/tracking-dashboard") }}
-                >
-                    Tracking Dashboard
-                </a>
-            </li> */}
-
-      <li
-        className={
-          pathname === "/employee/guidance-support"
-            ? `nav-item active`
-            : `nav-item`
-        }>
-        <a
-          className="nav-link"
-          onClick={() => {
-            navigate("/employee/guidance-support");
-          }}>
-          Guidance & Support
-        </a>
-      </li>
-
-      <li
-        className={
-          pathname === "/employee/forum" ? `nav-item active` : `nav-item`
-        }>
-        <a
-          className="nav-link"
-          onClick={() => {
-            navigate("/employee/forum");
-          }}>
-          Forum
-        </a>
-      </li>
+      {createMenuItem("My Academy", "/my-academy", ["/saved-notes", "/my-profile"])}
+      {createMenuItem("Reports", "/employee/reports", [
+        "/employee/certificates",
+        "/employee/sustainable-plan-2"
+      ])}
+      {createMenuItem("Guidance & Support", "/employee/guidance-support")}
+      {createMenuItem("Forum", "/employee/forum")}
     </>
   );
 }

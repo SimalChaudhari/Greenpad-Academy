@@ -1,12 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAll,
-  updateProgress,
-  getModulesProgress,
-  editEmployeeNoteById,
-  deleteEmployeeNoteById,
-} from "../../../../redux/actions/employee/modulesActions";
+import { getAll, updateProgress, getModulesProgress, editEmployeeNoteById, deleteEmployeeNoteById } from "../../../../redux/actions/employee/modulesActions";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Layout from "../../../../Components/Layout";
 import { toast } from "react-toastify";
@@ -19,17 +13,12 @@ import "./module.css";
 
 const EmpCourseModulesIndex = () => {
   const navigate = useNavigate();
-
-  const navigatePage = (path) => {
-    navigate(path);
-  };
   const dispatch = useDispatch();
   const data = useSelector((state) => state?.employeemodule?.list?.data || []);
   const authId = useSelector((state) => state?.auth?.user);
-  const progress_list = useSelector(
-    (state) => state?.employeemodule?.progress_list || []
-  );
+  const progress_list = useSelector((state) => state?.employeemodule?.progress_list || []);
   const [selectedRow, setSelectedRow] = useState(null);
+
   const [currentDescriptionIndex, setCurrentDescriptionIndex] = useState([]);
   const [currentModuleIndex, setCurrentModuleIndex] = useState([]);
   const [activeRow, setActiveRow] = useState("");
@@ -46,21 +35,6 @@ const EmpCourseModulesIndex = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editmodalOpen, setEditModalOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
-
-  const mergeProgressWithModules = () => {
-    if (!Array.isArray(data)) {
-      return [];
-    }
-
-    return data.map((course) => {
-      return {
-        ...course,
-        progress_list: progress_list,
-      };
-    });
-  };
-
-  const mergedData = mergeProgressWithModules();
 
   const [selectedModuleDescription, setSelectedModuleDescription] =
     useState("");
@@ -86,7 +60,6 @@ const EmpCourseModulesIndex = () => {
           courseModuleId: courseModule_Id,
         };
         dispatch(updateProgress(formData));
-        // console.log('formData: ', formData);
       }
     }, 60000); // 60000 milliseconds = 1 minute
 
@@ -171,12 +144,7 @@ const EmpCourseModulesIndex = () => {
 
     const selectedModule = row;
 
-    if (
-      selectedModule
-      // &&
-      // Array.isArray(selectedModule?.descriptions) &&
-      // selectedModule?.descriptions?.length > 0
-    ) {
+    if (selectedModule) {
       const descriptionContents = selectedModule?.descriptions?.map(
         (description) => description?.content
       );
@@ -265,9 +233,6 @@ const EmpCourseModulesIndex = () => {
   });
 
   const calculateCourseProgress = (module_list, course_id, courseModuleId) => {
-    // const modulesForCourse = progress_list?.filter(
-    //   (item) => item?.coursemodule === courseModuleId
-    //   );
     const totalModules = module_list?.length;
 
     if (!totalModules) {
@@ -292,13 +257,6 @@ const EmpCourseModulesIndex = () => {
   const checkData = filteredProgressList?.map((data) => data?.module);
 
   const contentRef = useRef(null);
-
-  // const toggleFullscreen = () => {
-  //   if (screenfull?.isEnabled && contentRef?.current) {
-  //     screenfull?.toggle(contentRef?.current);
-  //     setZoomed(isZoomed === true ? false : true);
-  //   }
-  // };
 
   useEffect(() => {
     const handleFullScreenChange = () => {
@@ -347,17 +305,11 @@ const EmpCourseModulesIndex = () => {
   const handleEdit = (note) => {
     setEditModalOpen(true);
     setSelectedNote(note);
-    var formData = {
-      data: note,
-      courseId: courseId,
-    };
-    // Rest of your code...
   };
 
   const handleCloseModal = () => {
     // Define the actions you want to perform when closing the modal
     setDeleteModalOpen(false);
-    // Additional actions...
   };
 
   const handleDelete = (data) => {
@@ -371,13 +323,6 @@ const EmpCourseModulesIndex = () => {
   };
   const [isHovered, setIsHovered] = useState(true);
 
-  // const handleMouseEnter = () => {
-  //   setIsHovered(true);
-  // };
-
-  // const handleMouseLeave = () => {
-  //   setIsHovered(false);
-  // };
   const handleClick = () => {
     setIsHovered((prevIsHovered) => !prevIsHovered);
   };
@@ -395,23 +340,6 @@ const EmpCourseModulesIndex = () => {
       clearTimeout(timeoutId);
     };
   }, [isHovered]);
-
-  // useEffect(() => {
-  //   const handleMouseMove = () => {
-  //     // Reset the timeout when there is mouse movement
-  //     setIsHovered(true);
-  //   };
-
-  //   // Attach the event listener
-  //   window.addEventListener('mousemove', handleMouseMove);
-
-  //   // Detach the event listener when the component unmounts
-  //   return () => {
-  //     window.removeEventListener('mousemove', handleMouseMove);
-  //   };
-  // }, []);
-
-  // Toggle
 
   const [showContent, setShowContent] = useState(true);
 
@@ -432,9 +360,6 @@ const EmpCourseModulesIndex = () => {
 
         <div className="container-fluid">
           <div className="row">
-            {/* <button onClick={toggleContent} className="chap_toggle text-white">
-              Hide
-            </button> */}
             {showContent && (
               <div
                 className="col-xl-2 mt-2"
@@ -446,7 +371,7 @@ const EmpCourseModulesIndex = () => {
                 <div className="main_tab_content">
                   <div className="tab-content">
                     <div className="mb-2 pt-3 black_bg pr-3 pl-3 pt-1 pb-3 color_white heading_tabs text-center">
-                     Modules
+                      Modules
                     </div>
                     <div></div>
 
@@ -454,17 +379,15 @@ const EmpCourseModulesIndex = () => {
                       <div key={row?._id}>
                         <div
                           onClick={() => toggleModule(row)}
-                          className={`${
-                            activeRow === row?._id
+                          className={`${activeRow === row?._id
                               ? "mb-3 site_bg color_white pointer"
                               : "mb-3 pointer"
-                          }`}>
+                            }`}>
                           <div
-                            className={`${
-                              activeRow === row?._id
+                            className={`${activeRow === row?._id
                                 ? "pt-2 pb-2 site_bg color_white "
                                 : "white_bg color_black pt-2 pb-2"
-                            }`}>
+                              }`}>
                             <div
                               style={{
                                 display: "flex",
@@ -472,11 +395,10 @@ const EmpCourseModulesIndex = () => {
                                 justifyContent: "normal",
                               }}>
                               <div
-                                className={`${
-                                  activeRow === row?._id
+                                className={`${activeRow === row?._id
                                     ? "pt-2 pb-2 site_bg color_white pl-3 pr-3"
                                     : "white_bg color_white black_bg pl-3 pr-3 pt-2 pb-2 mr-2"
-                                }`}>
+                                  }`}>
                                 <b>{index + 1}.</b>{" "}
                               </div>
                               <div
@@ -500,20 +422,14 @@ const EmpCourseModulesIndex = () => {
                                 className="mb-1 pointer"
                                 onClick={() => toggleInnerModule(row)}>
                                 <div
-                                  className={`${
-                                    activeModuleRow === row?._id
+                                  className={`${activeModuleRow === row?._id
                                       ? checkData.includes(row?._id)
                                         ? "pt-2 pb-2 green_bg color_white pl-3 pr-3"
                                         : "pt-2 pb-2 site_bg color_white pl-3 pr-3"
                                       : "white_bg color_black pl-3 pr-3 pt-2 pb-2"
-                                  }`}
+                                    }`}
                                   style={{
-                                    // overflow: "hidden",
-                                    // textOverflow: "ellipsis",
-                                    // whiteSpace: "nowrap",
                                     display: "flex",
-                                    // alignItems: "center",
-                                    // justifyContent: "space-between",
                                   }}>
                                   <div>{index + 1}</div> &nbsp;:&nbsp;
                                   <div
@@ -524,9 +440,7 @@ const EmpCourseModulesIndex = () => {
                                     }}>
                                     {row?.title}
                                   </div>
-                                  {/* {row?.title?.length > 45
-                                    ? row?.title.substring(0, 45) + "..."
-                                    : row?.title} */}
+                                 
                                   <div>
                                     {checkData.includes(row?._id) && (
                                       <i
@@ -611,8 +525,6 @@ const EmpCourseModulesIndex = () => {
                                 currentDescriptions?.map((desc, index) => (
                                   <div
                                     className={isZoomed ? "zoomed_disc" : ""}
-                                    // onMouseEnter={handleMouseEnter}
-                                    // onMouseLeave={handleMouseLeave}
                                     onClick={handleClick}
                                     key={index}
                                     dangerouslySetInnerHTML={{
@@ -649,8 +561,6 @@ const EmpCourseModulesIndex = () => {
                                           {data?.name}
                                         </div>
                                       </>
-                                      {/* Title End */}
-                                      {/*Start Next And Pre */}
                                       <p
                                         onClick={prevRow}
                                         className="px-2 py-3 rounded m-2 text-center cursor"
@@ -696,11 +606,10 @@ const EmpCourseModulesIndex = () => {
                                                   index + 1
                                                 )
                                               }
-                                              className={`round-border ${
-                                                descriptionPage === index + 1
+                                              className={`round-border ${descriptionPage === index + 1
                                                   ? "active"
                                                   : ""
-                                              }`}>
+                                                }`}>
                                               {index + 1}
                                             </button>
                                           ))}
@@ -791,9 +700,8 @@ const EmpCourseModulesIndex = () => {
                             onClick={() =>
                               handleDescriptionPageChange(index + 1)
                             }
-                            className={`round-border ${
-                              descriptionPage === index + 1 ? "active" : ""
-                            }`}>
+                            className={`round-border ${descriptionPage === index + 1 ? "active" : ""
+                              }`}>
                             {index + 1}
                           </button>
                         )
@@ -885,11 +793,10 @@ const EmpCourseModulesIndex = () => {
                     <ul className="nav nav-tabs">
                       <li className="nav-item">
                         <a
-                          className={`nav-link ${
-                            activeTab === "newnotes"
+                          className={`nav-link ${activeTab === "newnotes"
                               ? "is_active"
                               : "isnot_active"
-                          }`}
+                            }`}
                           data-toggle="tab"
                           href="#newnotes"
                           onClick={() => handleTabClick("newnotes")}>
@@ -900,11 +807,10 @@ const EmpCourseModulesIndex = () => {
                       &nbsp; &nbsp;
                       <li className="nav-item">
                         <a
-                          className={`nav-link ${
-                            activeTab === "savenotes"
+                          className={`nav-link ${activeTab === "savenotes"
                               ? "is_active"
                               : "isnot_active"
-                          }`}
+                            }`}
                           data-toggle="tab"
                           href="#savenotes"
                           onClick={() => handleTabClick("savenotes")}>
@@ -915,9 +821,8 @@ const EmpCourseModulesIndex = () => {
                   </div>
                   <div className="tab-content">
                     <div
-                      className={`tab-pane container p-0 ${
-                        activeTab === "newnotes" ? "active" : ""
-                      }`}
+                      className={`tab-pane container p-0 ${activeTab === "newnotes" ? "active" : ""
+                        }`}
                       id="newnotes">
                       <div className="rgst_form p-3 ">
                         <div className="additional-links">
@@ -940,9 +845,8 @@ const EmpCourseModulesIndex = () => {
                         </button>
                       </div>
                       <div
-                        className={`white_bg mt-4 pl-4 pt-3 pb-2 ${
-                          activeRowModule === "" ? "disabled" : ""
-                        }`}
+                        className={`white_bg mt-4 pl-4 pt-3 pb-2 ${activeRowModule === "" ? "disabled" : ""
+                          }`}
                         style={{
                           opacity: activeRowModule === "" ? 0.4 : 1,
                           border: "2px solid #4848487d",
@@ -952,41 +856,36 @@ const EmpCourseModulesIndex = () => {
                           add tags :
                         </span>
                         <span
-                          className={`green_bg add_notes_dot ml-3 ${
-                            activeTag === "green" ? "add_notes_dot_active" : ""
-                          }`}
+                          className={`green_bg add_notes_dot ml-3 ${activeTag === "green" ? "add_notes_dot_active" : ""
+                            }`}
                           onClick={() => handleTagClick("green")}>
                           &nbsp;
                         </span>{" "}
                         <span
-                          className={`orange add_notes_dot ml-3 ${
-                            activeTag === "orange" ? "add_notes_dot_active" : ""
-                          }`}
+                          className={`orange add_notes_dot ml-3 ${activeTag === "orange" ? "add_notes_dot_active" : ""
+                            }`}
                           onClick={() => handleTagClick("orange")}>
                           &nbsp;
                         </span>{" "}
                         <span
-                          className={`purple add_notes_dot ml-3 ${
-                            activeTag === "purple" ? "add_notes_dot_active" : ""
-                          }`}
+                          className={`purple add_notes_dot ml-3 ${activeTag === "purple" ? "add_notes_dot_active" : ""
+                            }`}
                           onClick={() => handleTagClick("purple")}>
                           &nbsp;
                         </span>{" "}
                         <span
-                          className={`bg-primary add_notes_dot ml-3 ${
-                            activeTag === "bg-primary"
+                          className={`bg-primary add_notes_dot ml-3 ${activeTag === "bg-primary"
                               ? "add_notes_dot_active"
                               : ""
-                          }`}
+                            }`}
                           onClick={() => handleTagClick("bg-primary")}>
                           &nbsp;
                         </span>{" "}
                       </div>
                     </div>
                     <div
-                      className={`tab-pane container p-0 ${
-                        activeTab === "savenotes" ? "active" : ""
-                      }`}
+                      className={`tab-pane container p-0 ${activeTab === "savenotes" ? "active" : ""
+                        }`}
                       id="savenotes">
                       <div
                         className="rgst_form p-3"

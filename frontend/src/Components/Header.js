@@ -10,7 +10,7 @@ import CompanyMenu from "./company_menu";
 import EmployeeMenu from "./employee_menu";
 import { getProfile } from "../redux/actions/admin/companyActions";
 import { IMAGE_URL } from "../config/config";
-
+import './Header.css'; 
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -257,7 +257,7 @@ const Header = () => {
                 <ul className="navbar-nav">
                   <li
                     className={
-                      pathname === "/" ? `nav-item active` : `nav-item`
+                      pathname === "/" || pathname.includes("/employee/courses/modules") ? `nav-item active` : `nav-item`
                     }
                   >
                     <a

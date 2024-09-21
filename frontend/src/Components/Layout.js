@@ -4,11 +4,11 @@ import Footer from "./Footer";
 
 const Layout = ({ children }) => {
   return (
-    <div>
+    <div className="layout">
       <Header />
-      <div className="grey_bg contentHeight">
+      <main className="main-content grey_bg contentHeight">
         {children}
-      </div>
+      </main>
       <Footer />
     </div>
   );

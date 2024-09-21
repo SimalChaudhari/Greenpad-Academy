@@ -1,58 +1,36 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAll,
-  getModulesProgress,
-  updateProgress,
-  editEmployeeNoteById,
-} from "../../../../redux/actions/employee/modulesActions";
-// import { editEmployeeNoteById1 } from "../../../../redux/actions/employee/employeeActions";
-import { useParams } from "react-router-dom";
+import { getAll, getModulesProgress, updateProgress, editEmployeeNoteById } from "../../../../redux/actions/employee/modulesActions";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import Layout from "../../../../Components/Layout";
-import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import screenfull from "screenfull";
 import "./module.css";
-// import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 
 const EmpModulesIndex = () => {
   const dispatch = useDispatch();
   const [newNotesContent, setNewNotesContent] = useState("");
   const data = useSelector((state) => state?.employeemodule?.list?.data || []);
   const authId = useSelector((state) => state?.auth?.user);
-  const progress_list = useSelector(
-    (state) => state?.employeemodule?.progress_list || []
-    );
+  const progress_list = useSelector((state) => state?.employeemodule?.progress_list || []);
 
   const [activeTag, setActiveTag] = useState(null);
-
-  const handleTagClick = (tag) => {
-    setActiveTag(tag);
-  };
-
-  const [selectedModuleDescription, setSelectedModuleDescription] =
-  useState("");
-
+  const [selectedModuleDescription, setSelectedModuleDescription] = useState("");
   const [saveNotesContent, setSaveNotesContent] = useState("");
-
   const { id } = useParams();
-
   const [activeRow, setActiveRow] = useState("");
   const [description, setDescription] = useState("");
-
   const location = useLocation();
   const courseModuleId = location?.pathname.split("/")[3];
   const courseId = location?.pathname.split("/")[5];
+  const navigate = useNavigate();
 
-  const filteredModule = data?.modules.find(
-    (module) => module?._id === courseModuleId
-    );
-
+  const filteredModule = data?.modules.find((module) => module?._id === courseModuleId);
 
   useEffect(() => {
     dispatch(getAll(id));
     dispatch(getModulesProgress(courseModuleId));
-  }, [dispatch, id]);
+  }, [dispatch, id, courseModuleId]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -60,36 +38,24 @@ const EmpModulesIndex = () => {
         const formData = {
           id: id,
           activeRow,
-          courseModuleId: courseModuleId,
-        }
-        // dispatch(updateProgress(activeRow, id));
+          courseModuleId,
+        };
         dispatch(updateProgress(formData));
       }
-    }, 60000); // 60000 milliseconds = 1 minute
+    }, 60000);
 
-    // Clean up the interval when the component unmounts
     return () => {
       clearInterval(intervalId);
     };
-  }, [dispatch, activeRow]);
+  }, [dispatch, activeRow, id, courseModuleId]);
 
   const handleRowClick = (row) => {
     setDescriptionPage(1);
     setActiveRow(row?._id);
-    // const selectedModule = data?.modules?.find(
-    //   (module) => module?._id === row?._id
-    //   );
-      const selectedModule = row;
+    const selectedModule = row;
 
-    if (
-      selectedModule 
-      // &&
-      // Array.isArray(selectedModule?.descriptions) &&
-      // selectedModule?.descriptions?.length > 0
-    ) {
-      const descriptionContents = selectedModule?.descriptions?.map(
-        (description) => description?.content
-      );
+    if (selectedModule) {
+      const descriptionContents = selectedModule?.descriptions?.map((description) => description?.content);
       setSelectedModuleDescription(descriptionContents);
     } else {
       setSelectedModuleDescription([]);
@@ -97,12 +63,6 @@ const EmpModulesIndex = () => {
   };
 
   const [activeTab, setActiveTab] = useState("newnotes");
-
-  useEffect(() => {
-    if (data?.modules?.list?.length > 0) {
-      // setSelectedModuleDescription(data?.modules.list[0].descriptions);
-    }
-  }, [data?.modules]);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -113,6 +73,7 @@ const EmpModulesIndex = () => {
     const currentIndex = filteredModule?.module?.findIndex(
       (module) => module?._id === activeRow
     );
+
     if (currentIndex > 0) {
       const prevModule = filteredModule?.module[currentIndex - 1];
       setActiveRow(prevModule?._id);
@@ -128,7 +89,7 @@ const EmpModulesIndex = () => {
     setDescriptionPage(1);
     const currentIndex = filteredModule?.module?.findIndex(
       (module) => module?._id === activeRow
-      );
+    );
     if (currentIndex < filteredModule?.module?.length - 1) {
       const nextModule = filteredModule?.module[currentIndex + 1];
       setActiveRow(nextModule?._id);
@@ -140,21 +101,24 @@ const EmpModulesIndex = () => {
     }
   };
 
+  const handleTagClick = (tag) => {
+    setActiveTag(tag);
+  };
+
+  const handleExamClick = (moduleId) => {
+    navigate(`/exam/${moduleId}`); // You need to create this route for the exam page
+  };
+
   const handleSaveNotes = () => {
-    // Get the content of the textarea based on activeTab
     const textareaContent =
       activeTab === "newnotes" ? newNotesContent : saveNotesContent;
 
-    // Perform validation here if needed
     if (!textareaContent.trim()) {
-      // alert("Please enter some notes before saving.");
       toast.warning("Please enter some notes before saving.");
       return;
     }
 
-    // Call an API or update your state with the saved notes
-    // Here's an example using Redux action dispatch:
-    const Id = authId.id; // Assuming you have authId defined somewhere
+    const Id = authId.id;
 
     const formData = {
       course: courseId,
@@ -164,17 +128,12 @@ const EmpModulesIndex = () => {
     };
 
     dispatch(editEmployeeNoteById(Id, formData));
-    // dispatch(editEmployeeNoteById1(Id, formData));
 
-    // Reset the textarea content if needed
     if (activeTab === "newnotes") {
       setNewNotesContent("");
     } else if (activeTab === "savenotes") {
       setSaveNotesContent("");
     }
-
-    // Display a success message or handle errors
-    // alert("Notes saved successfully!");
   };
 
   const extractedData = progress_list?.map((entry) => ({
@@ -184,11 +143,11 @@ const EmpModulesIndex = () => {
   const extractedDataED = filteredModule?.module?.map((entry) => ({
     id: entry?._id,
   }));
-  
+
   const result = extractedData?.map((entry) => {
     const matchingEntry = extractedDataED?.find(
       (edEntry) => edEntry?.id === entry?.module
-      );
+    );
     return {
       module: entry?.module,
       notes: matchingEntry ? entry.notes : [],
@@ -196,7 +155,7 @@ const EmpModulesIndex = () => {
   });
 
   const [descriptionPage, setDescriptionPage] = useState(1);
-  const descriptionItemsPerPage = 1; // You can adjust the number of description items per page
+  const descriptionItemsPerPage = 1;
 
   const indexOfLastDescription = descriptionPage * descriptionItemsPerPage;
   const indexOfFirstDescription =
@@ -222,32 +181,24 @@ const EmpModulesIndex = () => {
     }
   };
 
-  const calculateCourseProgress = (module_list, course_id, courseModuleId) => {
-    // const modulesForCourse = progress_list?.filter(
-    //   (item) => item?.course === course_id
-    //   );
-    // const totalModules = module_list?.length;
-    
+  const calculateCourseProgress = (module_list, courseModuleId) => {
     const modulesForCourse = progress_list?.filter(
       (item) => item?.coursemodule === courseModuleId
-      );
+    );
     const totalModules = module_list?.length;
 
     if (!totalModules) {
-      return 0; // Return 0 if there are no modules in the course
+      return 0;
     }
 
     const completedModules =
       modulesForCourse?.filter((module) => module?.is_completed)?.length || 0;
-      const progressPercentage = ((completedModules / totalModules) * 100).toFixed(2); // Limit to 2 decimal places
+    const progressPercentage = ((completedModules / totalModules) * 100).toFixed(2);
 
     return progressPercentage;
   };
 
-  // Check Data
-  const filteredProgressList = progress_list.filter(
-    (item) => item.is_completed
-  );
+  const filteredProgressList = progress_list.filter((item) => item.is_completed);
 
   const checkData = filteredProgressList.map((data) => data.module);
 
@@ -263,55 +214,57 @@ const EmpModulesIndex = () => {
         </div>
 
         <div className="container-fluid">
-          {/* <div className="container"> */}
           <div className="row">
             <div className="col-lg-3 mt-2">
               <div className="main_tab_content">
                 <div className="tab-content">
+                  {/* Header for the Module Section */}
                   <div className="mb-2 pt-3 black_bg pr-3 pl-3 pt-1 pb-3 color_white heading_tabs text-center">
                     MODULES
                   </div>
-                  <div></div>
+
+                  {/* Loop through each module and render its details */}
                   {filteredModule?.module?.map((row, index) => (
                     <div
                       key={row?._id}
-                      className={`${
-                        activeRow === row?._id
-                          ? "mb-3 site_bg color_white ml-1 mr-1"
-                          : ""
-                      }`}
-                      onClick={() => handleRowClick(row)}>
-                      <div className="mb-2 pointer">
+                      className={`mb-3 pointer ${activeRow === row?._id ? "site_bg color_white ml-1 mr-1" : ""}`}
+                      onClick={() => handleRowClick(row)}
+                    >
+                      {/* Module Row */}
+                      <div className="mb-2">
                         <div
-                          className={`${
-                            activeRow === row?._id
-                              ? "pt-2 pb-2 site_bg color_white "
-                              : "white_bg color_black pt-2 pb-2"
-                          }`}>
-                          <b
-                            className={`${
-                              activeRow === row?._id
-                                ? "pt-2 pb-2 site_bg color_white pl-3 pr-3"
-                                : "white_bg color_white black_bg pl-3 pr-3 pt-2 pb-2"
-                            }`}>
+                          className={`pt-2 pb-2 ${activeRow === row?._id ? "site_bg color_white" : "white_bg color_black"}`}
+                        >
+                          {/* Index and Title */}
+                          <b className={`pl-3 pr-3 ${activeRow === row?._id ? "site_bg color_white" : "black_bg white_bg"}`}>
                             {index + 1}.
-                          </b>{" "}
+                          </b>
                           &nbsp;
                           <b className="pl-3 pr-3" title={row?.title}>
-                            {row?.title?.length > 40
-                              ? row?.title.substring(0, 40) + "..."
-                              : row?.title}
-                          </b>{" "}
+                            {row?.title?.length > 40 ? row?.title.substring(0, 40) + "..." : row?.title}
+                          </b>
+
+                          {/* Checkmark Icon if the Module is Completed */}
                           {checkData.includes(row?._id) && (
                             <i
                               className="fa fa-check-circle"
                               style={{
                                 fontSize: "20px",
                                 float: "right",
-                                margin: "3px 15px 0px 0",
-                              }}></i>
+                                margin: "3px 15px 0 0",
+                              }}
+                            ></i>
                           )}
-                          {/* <b className="pl-3 pr-3">{row.title}</b> */}
+                        </div>
+
+                        {/* Exam Button */}
+                        <div className="text-right mt-2">
+                          <button
+                            className="btn btn-success"
+                            onClick={() => handleExamClick(row?._id)}
+                          >
+                            Take Exam
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -319,25 +272,25 @@ const EmpModulesIndex = () => {
                 </div>
               </div>
             </div>
+
+
             <div className="col-lg-6 mt-2">
               <div className="main_tab_content">
                 <div className="tab-content">
                   <div className="mb-3 site_bg pr-3 pl-3 pt-1 pb-1 color_white heading_tabs">
-                    <div>
-                      <button
-                        className="color_white"
-                        onClick={toggleFullscreen}
-                        disabled={activeRow === ""}
-                        style={{
-                          float: "right",
-                          cursor: "pointer",
-                          border: "none",
-                          background: "none",
-                        }}>
-                        &nbsp;<i className="fas fa-search-plus"></i>
-                      </button>
-                    </div>
                     {data?.name}
+                    <button
+                      className="color_white"
+                      onClick={toggleFullscreen}
+                      disabled={activeRow === ""}
+                      style={{
+                        float: "right",
+                        cursor: "pointer",
+                        border: "none",
+                        background: "none",
+                      }}>
+                      &nbsp;<i className="fas fa-search-plus"></i>
+                    </button>
                   </div>
                   <div
                     style={{ minHeight: "400px" }}
@@ -371,9 +324,8 @@ const EmpModulesIndex = () => {
                             onClick={() =>
                               handleDescriptionPageChange(index + 1)
                             }
-                            className={`round-border ${
-                              descriptionPage === index + 1 ? "active" : ""
-                            }`}>
+                            className={`round-border ${descriptionPage === index + 1 ? "active" : ""
+                              }`}>
                             {index + 1}
                           </button>
                         )
@@ -391,7 +343,6 @@ const EmpModulesIndex = () => {
                               <span>
                                 {calculateCourseProgress(
                                   filteredModule?.module,
-                                  courseId,
                                   courseModuleId
                                 )}{" "}
                                 %
@@ -403,13 +354,25 @@ const EmpModulesIndex = () => {
                                 style={{
                                   width: `${calculateCourseProgress(
                                     filteredModule?.module,
-                                    courseId,courseModuleId
+                                    courseModuleId
                                   )}%`,
                                 }}></div>
                             </div>
                           </div>
                         </div>
                       </div>
+                    </div>
+
+                    {/* Add Exam Component here */}
+                    <div className="exam-section white_bg p-3 mt-3">
+                      <h4>Module Exam</h4>
+                      <p>After completing the module, please take this short exam:</p>
+                      <ul>
+                        <li>Question 1: [Add question here]</li>
+                        <li>Question 2: [Add question here]</li>
+                        <li>Question 3: [Add question here]</li>
+                      </ul>
+                      <button className="btn btn-primary mt-2">Submit Exam</button>
                     </div>
 
                     <div className="col-lg-12">
@@ -438,17 +401,17 @@ const EmpModulesIndex = () => {
                 </div>
               </div>
             </div>
+
             <div className="col-lg-3 mt-2">
               <section className="">
                 <div className="enrollment_tab">
                   <ul className="nav nav-tabs">
                     <li className="nav-item">
                       <a
-                        className={`nav-link ${
-                          activeTab === "newnotes"
-                            ? "is_active"
-                            : "isnot_active"
-                        }`}
+                        className={`nav-link ${activeTab === "newnotes"
+                          ? "is_active"
+                          : "isnot_active"
+                          }`}
                         data-toggle="tab"
                         href="#newnotes"
                         onClick={() => handleTabClick("newnotes")}>
@@ -459,11 +422,10 @@ const EmpModulesIndex = () => {
                     &nbsp; &nbsp;
                     <li className="nav-item">
                       <a
-                        className={`nav-link ${
-                          activeTab === "savenotes"
-                            ? "is_active"
-                            : "isnot_active"
-                        }`}
+                        className={`nav-link ${activeTab === "savenotes"
+                          ? "is_active"
+                          : "isnot_active"
+                          }`}
                         data-toggle="tab"
                         href="#savenotes"
                         onClick={() => handleTabClick("savenotes")}>
@@ -474,9 +436,8 @@ const EmpModulesIndex = () => {
                 </div>
                 <div className="tab-content">
                   <div
-                    className={`tab-pane container p-0 ${
-                      activeTab === "newnotes" ? "active" : ""
-                    }`}
+                    className={`tab-pane container p-0 ${activeTab === "newnotes" ? "active" : ""
+                      }`}
                     id="newnotes">
                     <div className="rgst_form p-3 ">
                       <div className="additional-links">
@@ -493,7 +454,6 @@ const EmpModulesIndex = () => {
                       <button
                         className="btn btn-primary btn-sm mt-2"
                         onClick={handleSaveNotes}
-                        // onClick={() => handleSaveNotes(activeTab)}
                         disabled={activeRow === ""}>
                         Save
                       </button>
@@ -503,41 +463,36 @@ const EmpModulesIndex = () => {
                         add tags :
                       </span>
                       <span
-                        className={`green_bg add_notes_dot ml-3 ${
-                          activeTag === "green" ? "add_notes_dot_active" : ""
-                        }`}
+                        className={`green_bg add_notes_dot ml-3 ${activeTag === "green" ? "add_notes_dot_active" : ""
+                          }`}
                         onClick={() => handleTagClick("green")}>
                         &nbsp;
                       </span>{" "}
                       <span
-                        className={`orange add_notes_dot ml-3 ${
-                          activeTag === "orange" ? "add_notes_dot_active" : ""
-                        }`}
+                        className={`orange add_notes_dot ml-3 ${activeTag === "orange" ? "add_notes_dot_active" : ""
+                          }`}
                         onClick={() => handleTagClick("orange")}>
                         &nbsp;
                       </span>{" "}
                       <span
-                        className={`purple add_notes_dot ml-3 ${
-                          activeTag === "purple" ? "add_notes_dot_active" : ""
-                        }`}
+                        className={`purple add_notes_dot ml-3 ${activeTag === "purple" ? "add_notes_dot_active" : ""
+                          }`}
                         onClick={() => handleTagClick("purple")}>
                         &nbsp;
                       </span>{" "}
                       <span
-                        className={`bg-primary add_notes_dot ml-3 ${
-                          activeTag === "bg-primary"
-                            ? "add_notes_dot_active"
-                            : ""
-                        }`}
+                        className={`bg-primary add_notes_dot ml-3 ${activeTag === "bg-primary"
+                          ? "add_notes_dot_active"
+                          : ""
+                          }`}
                         onClick={() => handleTagClick("bg-primary")}>
                         &nbsp;
                       </span>{" "}
                     </div>
                   </div>
                   <div
-                    className={`tab-pane container p-0 ${
-                      activeTab === "savenotes" ? "active" : ""
-                    }`}
+                    className={`tab-pane container p-0 ${activeTab === "savenotes" ? "active" : ""
+                      }`}
                     id="savenotes">
                     <div className="rgst_form p-3">
                       <div className="additional-links">

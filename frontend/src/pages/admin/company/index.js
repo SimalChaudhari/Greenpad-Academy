@@ -2,16 +2,14 @@ import React, { useEffect, useState } from "react";
 import {
   getAllCompanies,
   deleteCompanyById,
-  getProfile,
 } from "../../../redux/actions/admin/companyActions";
-import { getListing } from "../../../redux/actions/admin/employeeActions";
 import { Table, DeleteModel } from "../../../Components";
 import { useDispatch, useSelector } from "react-redux";
 import Layout from "../../../Components/Layout.js";
 import EditModelForm from "./EditModelForm.js";
-import { useNavigate, useLocation } from "react-router-dom";
 import CreateModelForm from "./CreateModelForm.js";
-import { Hourglass } from "react-loader-spinner"; // Import the loader component
+import { useNavigate } from "react-router-dom";
+import { Hourglass } from "react-loader-spinner";
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
 
@@ -20,50 +18,22 @@ const CompanyManagement = () => {
   const companyReducer = useSelector((state) => state.company);
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const loading = companyReducer.loading;
-  const [formInputs, setFormInputs] = useState({
-    company_name: "",
-    email: "",
-    address: "",
-    country: "",
-    post_code: "",
-    is_active: false,
-  });
-
   const navigate = useNavigate();
-  const { pathname } = useLocation();
-
-  const navigatePage = (path) => {
-    navigate(path);
-  };
-
-  function View(row) {
-    const id = row._id;
-    dispatch(getProfile(row._id));
-    setSelectedCompany(row);
-    navigatePage(`/company/view/${id}`);
-  }
-  function EmployeeView(row) {
-    const id = row._id;
-    setSelectedCompany(row);
-    navigatePage(`/company/Employee/view/${id}`);
-  }
-
-  const columns = [
-    { key: "company_name", label: "Name" },
-    { key: "email", label: "Email" },
-    { key: "address", label: "Address" },
-    { key: "country", label: "Country" },
-    { key: "post_code", label: "Post Code" },
-    // { key: "is_active", label: "Is Active" },
-  ];
 
   useEffect(() => {
-      dispatch(getAllCompanies());
-  }, []);
+    dispatch(getAllCompanies());
+  }, [dispatch]);
+
+  // Filtered companies based on the search query
+  const filteredCompanies = companyReducer?.list?.data?.filter((company) =>
+    company.company_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    company.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -73,70 +43,71 @@ const CompanyManagement = () => {
     setModalOpen(false);
   };
 
-  const handleFormInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormInputs((prevInputs) => ({
-      ...prevInputs,
-      [name]: value,
-    }));
+  const createHandleOpenModal = () => {
+    setCreateModalOpen(true);
   };
 
   const handleUpdate = (updatedCompany) => {
-    // dispatch(updateCompany(updatedCompany));
     setSelectedCompany(null);
     handleCloseModal();
   };
 
   const handleDelete = (data) => {
-    setSelectedCompany(null);
-    handleCloseModal();
-    // Assuming you have the company ID stored in state or as a parameter
-    const companyId = data._id; // Add the company ID here
+    const companyId = data._id;
     dispatch(deleteCompanyById(companyId));
+    setSelectedCompany(null);
+    setDeleteModalOpen(false);
   };
+
   const handleView = (companyId) => {
-    navigatePage(`/company-management/view/${companyId}`);
+    navigate(`/company-management/view/${companyId}`);
   };
 
-  const createHandleOpenModal = () => {
-    setCreateModalOpen(true);
-  };
-
-  const createHandleCloseModal = () => {
-    setCreateModalOpen(false);
-  };
+  const columns = [
+    { key: "company_name", label: "Company Name" },
+    { key: "email", label: "Email" },
+    { key: "address", label: "Address" },
+    { key: "country", label: "Country" },
+    { key: "post_code", label: "Post Code" },
+  ];
 
   return (
     <Layout>
-      <section className="forum_page grey_bg pt-5 pb-5">
+      <section className="company-management grey_bg pt-5 pb-5">
         <div className="container">
           <div className="row">
             <div className="col-lg-12 mx-auto">
-              <div className="forum_content">
-                <h3 className="mb-4 p-2 site_bg color_white">COMPANIES</h3>
-
-                <Tooltip id="my-tooltip" />
-                <div className="container col-md-12">
-                  <div className="row register_form">
-                    <div className="col-lg-12">
-                      <div className="form_field add_courses mb-1 text-right">
-                        <a
-                          className="color_white blue_bg d-inline-block mr-0 p-2 rounded"
-                          // href="#"
-                          // data-toggle="modal"
-                          // data-target="#myModal"
-                          onClick={() => {
-                            createHandleOpenModal();
-                          }}
-                        >
-                          Add
-                        </a>
+              <div className="company_content">
+                <h3 className="mb-4 p-2 site_bg color_white">Companies</h3>
+                <div className="company_table white_bg p-3">
+                  <div className="row mb-4 align-items-center">
+                    {/* Search Company */}
+                    <div className="col-md-8 d-flex align-items-center">
+                      <div className="flex-grow-1">
+                        <label htmlFor="searchCompany" className="form-label">
+                          Search Company:
+                        </label>
+                        <input
+                          type="text"
+                          id="searchCompany"
+                          className="form-control"
+                          placeholder="Search by name or email"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                        />
                       </div>
                     </div>
+                    {/* Add Company Button */}
+                    <div className="col-md-4 text-right">
+                      <button
+                        className="btn btn-primary"
+                        onClick={createHandleOpenModal}
+                      >
+                        Add Company
+                      </button>
+                    </div>
                   </div>
-                </div>
 
-                <div className="forum_table white_bg p-3">
                   {loading ? (
                     <div className="text-center">
                       <Hourglass
@@ -151,11 +122,35 @@ const CompanyManagement = () => {
                     </div>
                   ) : (
                     <div className="admincompany">
-                      {companyReducer?.list?.data ? (
+                      {filteredCompanies && filteredCompanies.length > 0 ? (
                         <Table
                           columns={columns}
-                          data={companyReducer.list.data}
+                          data={filteredCompanies}
                           actions={[
+                            {
+                              label: (
+                                <i
+                                  className="fas fa-users"
+                                  data-tooltip-id="my-tooltip"
+                                  data-tooltip-content="View Employees"
+                                ></i>
+                              ),
+                              buttonClassName: "btn-warning me-1",
+                              onClick: (row) => {
+                                navigate(`/company/employees/${row._id}`);
+                              },
+                            },
+                            {
+                              label: (
+                                <i
+                                  className="fas fa-eye"
+                                  data-tooltip-id="my-tooltip"
+                                  data-tooltip-content="View"
+                                ></i>
+                              ),
+                              buttonClassName: "btn-info me-1",
+                              onClick: (row) => handleView(row._id),
+                            },
                             {
                               label: (
                                 <i
@@ -164,7 +159,7 @@ const CompanyManagement = () => {
                                   data-tooltip-content="Edit"
                                 ></i>
                               ),
-                              buttonClassName: "btn-primary mr-1",
+                              buttonClassName: "btn-primary me-1",
                               onClick: (row) => {
                                 handleOpenModal();
                                 setSelectedCompany(row);
@@ -178,49 +173,18 @@ const CompanyManagement = () => {
                                   data-tooltip-content="Delete"
                                 ></i>
                               ),
-                              buttonClassName: "btn-danger mr-1",
+                              buttonClassName: "btn-danger",
                               onClick: (row) => {
                                 setDeleteModalOpen(true);
-                                setSelectedCompany(row);
-                              },
-                            },
-                            {
-                              label: (
-                                <i
-                                  className="fas fa-eye"
-                                  data-tooltip-id="my-tooltip"
-                                  data-tooltip-content="View"
-                                ></i>
-                              ),
-                              buttonClassName: "btn-info",
-                              onClick: (row) => {
-                                View(row);
-                                setViewModalOpen(true);
-                                setSelectedCompany(row);
-                              },
-                            },
-                            {
-                              label: (
-                                <i
-                                  className="fas fa-users"
-                                  data-tooltip-id="my-tooltip"
-                                  data-tooltip-content="Employess"
-                                ></i>
-                              ),
-                              buttonClassName: "btn-warning",
-                              onClick: (row) => {
-                                EmployeeView(row);
-                                setViewModalOpen(true);
                                 setSelectedCompany(row);
                               },
                             },
                           ]}
                         />
                       ) : (
-                        <>
-                          <hr />
-                          <b>Add Companies</b>
-                        </>
+                        <div className="text-center">
+                          <b>No companies found. Please add new companies.</b>
+                        </div>
                       )}
                     </div>
                   )}
@@ -229,6 +193,7 @@ const CompanyManagement = () => {
             </div>
           </div>
 
+          {/* Edit Modal */}
           {modalOpen && selectedCompany && (
             <EditModelForm
               companyData={selectedCompany}
@@ -237,6 +202,7 @@ const CompanyManagement = () => {
             />
           )}
 
+          {/* Delete Modal */}
           {deleteModalOpen && selectedCompany && (
             <DeleteModel
               data={selectedCompany}
@@ -245,16 +211,9 @@ const CompanyManagement = () => {
             />
           )}
 
-          {viewModalOpen && selectedCompany && (
-            <DeleteModel
-              companyData={selectedCompany}
-              handleView={handleView}
-              handleCloseModal={() => setViewModalOpen(false)}
-            />
-          )}
-
+          {/* Create Modal */}
           {createModalOpen && (
-            <CreateModelForm createHandleCloseModal={createHandleCloseModal} />
+            <CreateModelForm createHandleCloseModal={() => setCreateModalOpen(false)} />
           )}
         </div>
       </section>

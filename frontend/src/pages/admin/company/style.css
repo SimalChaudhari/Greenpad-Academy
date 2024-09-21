@@ -1,0 +1,27 @@
+.create-company-modal .modal-content {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .create-company-modal .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .create-company-modal .form-control {
+    border-radius: 5px;
+    padding: 10px;
+  }
+  
+  .create-company-modal .btn {
+    padding: 10px 20px;
+  }
+  
+  .create-company-modal .is-invalid {
+    border-color: red;
+  }
+  
+  .create-company-modal .invalid-feedback {
+    color: red;
+    font-size: 0.875rem;
+  }
+  

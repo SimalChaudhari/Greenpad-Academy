@@ -1,140 +1,117 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Formik, Field, ErrorMessage } from "formik";
 import { editPlansById } from "../../../redux/actions/Plans/plansActions";
 
-const defaultFilter = {
-  page: 1,
-  pageSize: 10,
-};
 const EditModelForm = ({ plansData, handleUpdate, handleCloseModal }) => {
   const dispatch = useDispatch();
   const [formInputs, setFormInputs] = useState(plansData);  
 
-
+  // Handle form submission
   const handleFormSubmit = async (values) => {
     try {
-        await handleUpdate(values);
-        await dispatch(editPlansById(values._id, values));
+      // Update the plan
+      await handleUpdate(values);
+      await dispatch(editPlansById(values._id, values));
     } catch (error) {
-      console.error("Error updating course:", error);
+      console.error("Error updating plan:", error);
     }
   };
 
-  
-  
+  // Close modal function
   const handleCancel = () => {
     handleCloseModal();
   };
 
   return (
     <div
-      className="modal fade fourm_modal show"
-      style={{ paddingRight: "17px", display: "block", background:"rgb(0 0 0 / 40%)"  }}
-      id="myModal"
+      className="modal fade show editPlanModal"
+      style={{ paddingRight: "17px", display: "block", background: "rgba(0, 0, 0, 0.5)" }}
+      id="editPlanModal"
     >
       <div className="modal-dialog">
-        <div className="modal-content">
-          <div className="modal-header site_bg">
-            <h4 className="modal-title color_white p-2">Update Plans</h4>
+        <div className="modal-content shadow">
+          <div className="modal-header text-white site_bg">
+            <h5 className="modal-title">Update Plan</h5>
             <button
-              onClick={handleCancel}
               type="button"
-              className="close"
-              data-dismiss="modal"
+              className="close text-white"
+              onClick={handleCancel}
             >
               &times;
             </button>
           </div>
           <div className="modal-body">
-            <section className="">
-              <div className="">
-                <div className="row m-2">
-                  <div className="col-lg-12 col-md-12 mx-auto">
-                    <div className="register_eroll">
-                      <div className="enrollment_tab">
-                        <ul className="nav nav-tabs">
-                          <li className="nav-item"></li>
-                        </ul>
-                      </div>
-                      <div className="tab-content">
-                        <div
-                          className="tab-pane active container p-0"
-                          id="business"
-                          Name
-                        >
-                          <div className="register_form">
-                            <Formik
-                              // initialValues={formInputs}
-                              initialValues={{
-                                ...formInputs
-                              }}
-                              validate={(values) => {
-                                const errors = {};
+            <Formik
+              initialValues={{
+                ...formInputs,
+              }}
+              validate={(values) => {
+                const errors = {};
 
-                                if (!values.title) {
-                                  errors.title = "Title is required";
-                                } else if (values.title.length < 3) {
-                                  errors.title =
-                                    "Title must be at least 3 characters long";
-                                } else if (values.title.length > 100) {
-                                  errors.title =
-                                    "Title less at least 100 characters long";
-                                }
+                // Title validation
+                if (!values.title) {
+                  errors.title = "Title is required";
+                } else if (values.title.length < 3) {
+                  errors.title = "Title must be at least 3 characters long";
+                } else if (values.title.length > 100) {
+                  errors.title = "Title must be less than 100 characters long";
+                }
 
-                                return errors;
-                              }}
-                              onSubmit={handleFormSubmit}
-                            >
-                              {({ handleSubmit, isSubmitting }) => (
-                                <form onSubmit={handleSubmit} className="p-2">
-                                  <h4 className="mb-3 pt-2 pb-2 text-uppercase">
-                                    plan details
-                                  </h4>
-                                  <div className="row">
-                                    <div className="col-lg-12">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Title{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <Field
-                                          type="text"
-                                          name="title"
-                                          placeholder="Title"
-                                          className="form-control"
-                                        />
-                                        <ErrorMessage
-                                          name="title"
-                                          component="div"
-                                          className="input-feedback"
-                                        />
-                                      </div>
-                                    </div>
-
-                                    <div className="col-lg-12">
-                                      <div className="form-btn text-center mt-3">
-                                        <button
-                                          className="text-uppercase green_bg color_white"
-                                          type="submit"
-                                          disabled={isSubmitting}
-                                        >
-                                          Update
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </form>
-                              )}
-                            </Formik>
-                          </div>
-                        </div>
+                return errors;
+              }}
+              onSubmit={handleFormSubmit}
+            >
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                isSubmitting,
+              }) => (
+                <form onSubmit={handleSubmit}>
+                  <div className="row">
+                    {/* Plan Title Input */}
+                    <div className="col-md-12">
+                      <div className="form-group">
+                        <label>
+                          Plan Title <span className="text-danger">*</span>
+                        </label>
+                        <Field
+                          type="text"
+                          name="title"
+                          value={values.title}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          placeholder="Enter plan title"
+                          className={`form-control ${
+                            errors.title && touched.title ? "is-invalid" : ""
+                          }`}
+                        />
+                        <ErrorMessage
+                          name="title"
+                          component="div"
+                          className="invalid-feedback"
+                        />
                       </div>
                     </div>
+
+                    {/* Submit Button */}
+                    <div className="col-md-12 text-center mt-3">
+                      <button
+                        type="submit"
+                        className="btn btn-primary"
+                        disabled={isSubmitting}
+                      >
+                        Update
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </section>
+                </form>
+              )}
+            </Formik>
           </div>
         </div>
       </div>

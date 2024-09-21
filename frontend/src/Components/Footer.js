@@ -3,15 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { ROLES } from "../config/roles";
 import { useSelector, useDispatch } from "react-redux";
 import { getEmpSetting } from "../redux/actions/Setting/settingActions";
-import { Hourglass } from "react-loader-spinner"; // Import the loader component
+import { Hourglass } from "react-loader-spinner";
+import './footer.css'; // Ensure this imports your CSS
 
 const Footer = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const navigatePage = (path) => {
-    navigate(path);
-  };
   const role = useSelector((state) => state?.auth?.user?.role);
   const settingReducer = useSelector((state) => state?.setting || []);
   const footerData = settingReducer?.list?.data || [];
@@ -21,386 +19,99 @@ const Footer = () => {
     if (footerData.length === 0) {
       dispatch(getEmpSetting());
     }
-  }, []);
+  }, [dispatch, footerData.length]);
+
+  const navigatePage = (path) => {
+    navigate(path);
+  };
+
+  const renderContactInfo = () => (
+    <ul className="contact">
+      <li>
+        <i className="far fa-paper-plane"></i>
+        {footerData.length > 0 && footerData[0]?.address}
+      </li>
+      <li>
+        <a href={`mailto:${footerData[0]?.email}`}>
+          <i className="fas fa-envelope"></i>
+          {footerData.length > 0 && footerData[0]?.email}
+        </a>
+      </li>
+      <li>
+        <a href={`tel:${footerData[0]?.mobile_number}`}>
+          <i className="fas fa-phone"></i>
+          {footerData.length > 0 && footerData[0]?.mobile_number}
+        </a>
+      </li>
+    </ul>
+  );
+
+  const renderSocialIcons = () => (
+    <ul className="social_icon">
+      <li>
+        <a href="#"><i className="fab fa-facebook-f"></i></a>
+      </li>
+      <li>
+        <a href="#"><i className="fab fa-twitter"></i></a>
+      </li>
+      <li>
+        <a href="#"><i className="fab fa-linkedin-in"></i></a>
+      </li>
+      <li>
+        <a href="#"><i className="fab fa-instagram"></i></a>
+      </li>
+    </ul>
+  );
+
+  const renderFooterColumns = () => {
+    switch (role) {
+      case ROLES.ADMIN:
+      case ROLES.COMPANY:
+      case ROLES.EMPLOYEE:
+        return (
+          <>
+            <div className="col-lg-4 col-md-6">
+              <div className="footer_column">
+                <img src="/assets/images/footer-logo.png" alt="logo" className="footer_logo" />
+                <p className="footer_description">
+                  Providing internationally recognised accredited management and leadership training in sustainability.
+                </p>
+                {renderSocialIcons()}
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-6">
+              <div className="footer_column">
+                <h4>Featured Links</h4>
+                <ul className="links">
+                  <li><a onClick={() => navigatePage("/")}>Home</a></li>
+                  <li><a onClick={() => navigatePage("/employees")}>Employees</a></li>
+                  <li><a onClick={() => navigatePage("/companies")}>Companies</a></li>
+                  <li><a onClick={() => navigatePage("/courses")}>Courses</a></li>
+                </ul>
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-12">
+              <div className="footer_column">
+                <h4>Contact</h4>
+                {loading ? <Hourglass visible={true} height="50" width="50" /> : renderContactInfo()}
+              </div>
+            </div>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <footer>
-      {role === ROLES.ADMIN ? (
-        <>
-          <div className="footer_top">
-            <div className="container">
-              <div className="row">
-                <div className="col-lg-4 col-md-6">
-                  <div className="footer_collume">
-                    <img src="/assets/images/footer-logo.png" alt="logo" />
-                    <p className="mt-3">
-                      Providing internationally recognised accredited management
-                      and leadership training in sustainability.
-                    </p>
-                    <ul className="mt-3 social_icon">
-                      <li className="d-inline-block mr-2">
-                        <a href="#">
-                          <i className="fab fa-facebook-f"></i>
-                        </a>
-                      </li>
-                      <li className="d-inline-block mr-2">
-                        <a href="#">
-                          <i className="fab fa-twitter"></i>
-                        </a>
-                      </li>
-                      <li className="d-inline-block mr-2">
-                        <a href="#">
-                          <i className="fab fa-linkedin-in"></i>
-                        </a>
-                      </li>
-                      <li className="d-inline-block mr-2">
-                        <a href="#">
-                          <i className="fab fa-instagram"></i>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-6">
-                  <div className="footer_collume">
-                    <h4>Featured Links</h4>
-
-                    <ul className="mt-3 links">
-                      <li>
-                        <a
-                          className="nav-link"
-                          onClick={() => {
-                            navigatePage("/");
-                          }}
-                        >
-                          <i className="fas fa-angle-right"></i>Home
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          className="nav-link"
-                          onClick={() => {
-                            navigatePage("/employees");
-                          }}
-                        >
-                          <i className="fas fa-angle-right"></i>Employees
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          className="nav-link"
-                          onClick={() => {
-                            navigatePage("/companies");
-                          }}
-                        >
-                          <i className="fas fa-angle-right"></i>Companies
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          className="nav-link"
-                          onClick={() => {
-                            navigatePage("/courses");
-                          }}
-                        >
-                          <i className="fas fa-angle-right"></i>Courses
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-12">
-                  <div className="footer_collume">
-                    <h4>CONTACT</h4>
-
-                    {loading ? (
-                      <div className="text-center">
-                        <Hourglass
-                          visible={true}
-                          height="80"
-                          width="80"
-                          ariaLabel="hourglass-loading"
-                          wrapperStyle={{}}
-                          wrapperClass=""
-                          colors={["#306cce", "#72a1ed"]}
-                        />
-                      </div>
-                    ) : (
-                      <>
-                        <ul className="mt-3 contact">
-                          <li>
-                            <i className="far fa-paper-plane"></i>
-                            {footerData.length > 0 && footerData[0]?.address}
-                          </li>
-                          <li>
-                            <a href="mailto:info@greenpadacademy.com">
-                              <i className="fas fa-envelope"></i>
-                              {footerData.length > 0 && footerData[0]?.email}
-                            </a>
-                          </li>
-                          <li>
-                            <a href="tel:985569854">
-                              <i className="fas fa-phone"></i>
-                              {footerData.length > 0 && footerData[0]?.mobile_number}
-                            </a>
-                          </li>
-                        </ul>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      ) : role === ROLES.COMPANY ? (
-        <>
-          <div className="footer_top">
-            <div className="container">
-              <div className="row">
-                <div className="col-lg-4 col-md-6">
-                  <div className="footer_collume">
-                    <img src="/assets/images/footer-logo.png" alt="logo" />
-                    <p className="mt-3">
-                      Providing internationally recognised accredited management
-                      and leadership training in sustainability.
-                    </p>
-                    <ul className="mt-3 social_icon">
-                      <li className="d-inline-block mr-2">
-                        <a href="#">
-                          <i className="fab fa-facebook-f"></i>
-                        </a>
-                      </li>
-                      <li className="d-inline-block mr-2">
-                        <a href="#">
-                          <i className="fab fa-twitter"></i>
-                        </a>
-                      </li>
-                      <li className="d-inline-block mr-2">
-                        <a href="#">
-                          <i className="fab fa-linkedin-in"></i>
-                        </a>
-                      </li>
-                      <li className="d-inline-block mr-2">
-                        <a href="#">
-                          <i className="fab fa-instagram"></i>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-6">
-                  <div className="footer_collume">
-                    <h4>Featured Links</h4>
-
-                    <ul className="mt-3 links">
-                      <li>
-                        <a
-                          className="nav-link"
-                          onClick={() => {
-                            navigatePage("/");
-                          }}
-                        >
-                          <i className="fas fa-angle-right"></i>Home
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          className="nav-link"
-                          onClick={() => {
-                            navigatePage("/employees");
-                          }}
-                        >
-                          <i className="fas fa-angle-right"></i>Employees
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          className="nav-link"
-                          onClick={() => {
-                            navigatePage("/courses");
-                          }}
-                        >
-                          <i className="fas fa-angle-right"></i>Courses
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-12">
-                  <div className="footer_collume">
-                    <h4>CONTACT</h4>
-                    {loading ? (
-                      <div className="text-center">
-                        <Hourglass
-                          visible={true}
-                          height="80"
-                          width="80"
-                          ariaLabel="hourglass-loading"
-                          wrapperStyle={{}}
-                          wrapperClass=""
-                          colors={["#306cce", "#72a1ed"]}
-                        />
-                      </div>
-                    ) : (
-                      <>
-                        <ul className="mt-3 contact">
-                          <li>
-                            <i className="far fa-paper-plane"></i>
-                            {footerData.length > 0 && footerData[0]?.address}
-                          </li>
-                          <li>
-                            <a href="mailto:info@greenpadacademy.com">
-                              <i className="fas fa-envelope"></i>
-                              {footerData.length > 0 && footerData[0]?.email}
-                            </a>
-                          </li>
-                          <li>
-                            <a href="tel:985569854">
-                              <i className="fas fa-phone"></i>
-                              {footerData.length > 0 && footerData[0]?.mobile_number}
-                            </a>
-                          </li>
-                        </ul>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      ) : role === ROLES.EMPLOYEE ? (
-        <>
-          <div className="footer_top">
-            <div className="container">
-              <div className="row">
-                <div className="col-lg-4 col-md-6">
-                  <div className="footer_collume">
-                    <img src="/assets/images/footer-logo.png" alt="logo" />
-                    <p className="mt-3">
-                      Providing internationally recognised accredited management
-                      and leadership training in sustainability.
-                    </p>
-                    <ul className="mt-3 social_icon">
-                      <li className="d-inline-block mr-2">
-                        <a href="#">
-                          <i className="fab fa-facebook-f"></i>
-                        </a>
-                      </li>
-                      <li className="d-inline-block mr-2">
-                        <a href="#">
-                          <i className="fab fa-twitter"></i>
-                        </a>
-                      </li>
-                      <li className="d-inline-block mr-2">
-                        <a href="#">
-                          <i className="fab fa-linkedin-in"></i>
-                        </a>
-                      </li>
-                      <li className="d-inline-block mr-2">
-                        <a href="#">
-                          <i className="fab fa-instagram"></i>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-6">
-                  <div className="footer_collume">
-                    <h4>Featured Links</h4>
-
-                    <ul className="mt-3 links">
-                      <li>
-                        <a
-                          className="nav-link"
-                          onClick={() => {
-                            navigatePage("/");
-                          }}
-                        >
-                          <i className="fas fa-angle-right"></i>Home
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          className="nav-link"
-                          onClick={() => {
-                            navigatePage("/my-academy");
-                          }}
-                        >
-                          <i className="fas fa-angle-right"></i>My Academy
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          className="nav-link"
-                          onClick={() => {
-                            navigatePage("/employee/reports");
-                          }}
-                        >
-                          <i className="fas fa-angle-right"></i>Reports
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          className="nav-link"
-                          onClick={() => {
-                            navigatePage("/employee/guidance-support");
-                          }}
-                        >
-                          <i className="fas fa-angle-right"></i>Guidance &
-                          Support
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-12">
-                  <div className="footer_collume">
-                    <h4>CONTACT</h4>
-                    {loading ? (
-                      <div className="text-center">
-                        <Hourglass
-                          visible={true}
-                          height="80"
-                          width="80"
-                          ariaLabel="hourglass-loading"
-                          wrapperStyle={{}}
-                          wrapperClass=""
-                          colors={["#306cce", "#72a1ed"]}
-                        />
-                      </div>
-                    ) : (
-                      <>
-                        <ul className="mt-3 contact">
-                          <li>
-                            <i className="far fa-paper-plane"></i>
-                            {footerData.length > 0 && footerData[0]?.address}
-                          </li>
-                          <li>
-                            <a href="mailto:info@greenpadacademy.com">
-                              <i className="fas fa-envelope"></i>
-                              {footerData.length > 0 && footerData[0]?.email}
-                            </a>
-                          </li>
-                          <li>
-                            <a href="tel:985569854">
-                              <i className="fas fa-phone"></i>
-                              {footerData.length > 0 && footerData[0]?.mobile_number}
-                            </a>
-                          </li>
-                        </ul>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      ) : null}
+      <div className="footer_top">
+        <div className="container">
+          <div className="row">{renderFooterColumns()}</div>
+        </div>
+      </div>
       <div className="footer_bottom">
-        <p>© Copyright Academy 2023</p>
+        <p>© Copyright Academy 2024</p>
       </div>
     </footer>
   );

@@ -1,0 +1,81 @@
+/* Styling for the Create Employee Form Modal */
+.modal-dialog {
+    max-width: 700px; /* Increased the modal width */
+  }
+  
+  .modal-content {
+    border-radius: 10px;
+  }
+  
+  .modal-header {
+    background-color: #f7716a;
+    color: white;
+    border-bottom: 2px solid #f7716a;
+  }
+  
+  .modal-title {
+    font-size: 18px;
+    font-weight: 500;
+  }
+  
+  .modal-body {
+    padding: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  select.form-control:not([size]):not([multiple]) {
+    padding: 10px !important;
+    border-radius: 5px  !important;
+    height: unset !important;
+  }
+  .form-control {
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .invalid-feedback {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
+  .createEmployeeModal .btn-primary {
+    background-color: #007bff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .createEmployeeModal .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  .close {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+  }
+  
+  @media (max-width: 768px) {
+    .modal-dialog {
+      max-width: 100%;
+    }
+  
+    .modal-body {
+      padding: 15px;
+    }
+  
+    .form-control {
+      padding: 8px;
+    }
+  
+    .btn-primary {
+      font-size: 14px;
+    }
+  }
+  

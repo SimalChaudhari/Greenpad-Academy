@@ -1,54 +1,48 @@
 import React from "react";
+import "./DeleteModel.css"; // Custom CSS file for styling
 
 const DeleteModel = ({ data, handleDelete, handleCloseModal }) => {
   const handleCancel = () => {
     handleCloseModal();
   };
 
-
   return (
     <div
-      className="modal fade fourm_modal show"
-      style={{ paddingRight: "17px", display: "block", background:"rgb(0 0 0 / 40%)"  }}
+      className="modal fade show delete-modal"
+      style={{ paddingRight: "17px", display: "block", background: "rgba(0, 0, 0, 0.5)" }}
       id="deleteModel"
     >
       <div className="modal-dialog">
-        <div className="modal-content">
-          <div className="modal-header site_bg">
-            <h4 className="modal-title color_white">
-              <label className="mt-2">Are you sure you want to delete?</label>
-            </h4>
+        <div className="modal-content shadow">
+          <div className="modal-header text-white">
+            <h5 className="modal-title  text-white">Confirm Deletion</h5>
             <button
               onClick={handleCancel}
               type="button"
-              className="close"
-              data-dismiss="modal"
+              className="close text-white"
+              aria-label="Close"
             >
-              &times;
+              <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div className="modal-body">
-            <form className="p-3 white_bg form_part">
-              <div className="row"></div>
-              <div className="row">
-                <div className="col-lg-12">
-                  <div className="form_filed mb-3">
-                    <div className="input_fields_wrap">
-                      {/* <label>Attachment</label> */}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <button
-                className="site_bg color_white mr-3"
-                onClick={(e) => handleDelete(data)}
-              >
-                Delete
-              </button>
-              <button className="green_bg color_white" onClick={handleCancel}>
-                No
-              </button>
-            </form>
+            <p className="text-center">
+              Are you sure you want to delete this item? This action cannot be undone.
+            </p>
+          </div>
+          <div className="modal-footer d-flex justify-content-center">
+            <button
+              className="btn btn-danger"
+              onClick={() => handleDelete(data)}
+            >
+              Yes, Delete
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={handleCancel}
+            >
+              No, Cancel
+            </button>
           </div>
         </div>
       </div>

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
+import { FaSortUp, FaSortDown } from 'react-icons/fa'; // Sorting icons
 
 const Table = ({ columns, data, actions }) => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
-  const [searchQuery, setSearchQuery] = useState("");
 
   const handleSort = (column) => {
     if (sortColumn === column) {
@@ -29,11 +29,6 @@ const Table = ({ columns, data, actions }) => {
     setCurrentPage((prevPage) => prevPage + 1);
   };
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value.toLowerCase()); // Update the search query state
-    setCurrentPage(1); // Reset current page when the search query changes
-  };
-
   const sortedData = sortColumn
     ? [...data].sort((a, b) => {
         if (a[sortColumn] < b[sortColumn]) {
@@ -46,21 +41,10 @@ const Table = ({ columns, data, actions }) => {
       })
     : data;
 
-  const filteredData = searchQuery
-    ? sortedData.filter((item) =>
-        columns.some((column) =>
-          item[column.key]
-            .toString()
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase())
-        )
-      )
-    : sortedData;
-
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const totalPages = Math.ceil(sortedData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentPageData = filteredData.slice(startIndex, endIndex);
+  const currentPageData = sortedData.slice(startIndex, endIndex);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -71,87 +55,86 @@ const Table = ({ columns, data, actions }) => {
   return (
     <>
       <div className="table-responsive">
-        <div className="search_course mb-3">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="box_shadow"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-          <i className="fas fa-search" style={{ top: "185px", right: "40px" }}></i>
-        </div>
-        <table className="full_width white_bg text-center" style={{ overflowY: "auto" }}>
-          <thead>
-            <tr className="black_bg">
+        <table className="table table-bordered table-hover">
+          <thead className="table-dark">
+            <tr>
               {/* Render the index column */}
-              <th className="color_white text-center" key={indexColumn.key}>
+              <th className="text-center" key={indexColumn.key}>
                 {indexColumn.label}
               </th>
               {/* Render the remaining columns */}
-              {columns && columns.map((column) => (
+              {columns.map((column) => (
                 <th
-                  className="color_white"
                   key={column.key}
+                  className="text-center"
                   onClick={() => handleSort(column.key)}
+                  style={{ cursor: "pointer" }}
                 >
-                  {column.label}
+                  {column.label}{" "}
+                  {sortColumn === column.key && (
+                    sortDirection === "asc" ? <FaSortUp /> : <FaSortDown />
+                  )}
                 </th>
               ))}
-              {actions && <th className="color_white">Actions</th>}
+              {actions && <th className="text-center">Actions</th>}
             </tr>
           </thead>
           <tbody>
-            {currentPageData.map((item, index) => (
-              <tr className="white_bg" key={index}>
-                {/* Render the index value */}
-                <td className="p-0 text-center">{startIndex + index + 1}</td>
-                {/* Render the remaining cells */}
-                {columns.map((column) => (
-                  <td className="p-0" key={column.key}>
-                    {item[column.key]}
-                  </td>
-                ))}
-                {actions && (
-                  <td className="p-0">
-                    {actions.map((action, index) => (
-                      <button
-                        // href="#"
-                        // data-toggle="modal"
-                        // data-target="#myModal"
-                        key={index}
-                        className={`btn btn-sm ${action.buttonClassName}`}
-                        onClick={() => action.onClick(item)}
-                      >
-                        {action.label}
-                      </button>
-                    ))}
-                  </td>
-                )}
+            {currentPageData.length > 0 ? (
+              currentPageData.map((item, index) => (
+                <tr key={index}>
+                  {/* Render the index value */}
+                  <td className="text-center">{startIndex + index + 1}</td>
+                  {/* Render the remaining cells */}
+                  {columns.map((column) => (
+                    <td className="text-center" key={column.key}>
+                      {item[column.key]}
+                    </td>
+                  ))}
+                  {actions && (
+                    <td className="text-center">
+                      {actions.map((action, index) => (
+                        <button
+                          key={index}
+                          className={`btn btn-sm ${action.buttonClassName} me-1`}
+                          onClick={() => action.onClick(item)}
+                        >
+                          {action.label}
+                        </button>
+                      ))}
+                    </td>
+                  )}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={columns.length + 2} className="text-center">
+                  No data available
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
-        <hr className="mt-3" />
-        <div className="d-flex justify-content-between align-items-center mt-2">
+
+        {/* Pagination and Items Per Page Controls */}
+        <div className="d-flex justify-content-between align-items-center mt-3">
           <div>
             <span>Show:</span>
             <select
-              className="form-control"
+              className="form-select d-inline-block ms-2"
+              style={{ width: "auto" }}
               value={itemsPerPage}
               onChange={handleItemsPerPageChange}
             >
-              {/* <option value={1}>1</option> */}
               <option value={10}>10</option>
               <option value={20}>20</option>
               <option value={50}>50</option>
             </select>
           </div>
+
           <nav>
-            <ul className="pagination">
-              <li
-                className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
-              >
+            <ul className="pagination m-0">
+              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                 <button
                   className="page-link"
                   onClick={handlePrevPage}

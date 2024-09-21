@@ -7,241 +7,162 @@ import {
 } from "../../../redux/actions/admin/courssActions";
 import { DeleteModel } from "../../../Components/index";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import CreateModelForm from "./CreateModelForm";
 import EditModelForm from "./EditModelForm";
-import { Hourglass } from "react-loader-spinner"; // Import the loader component
+import { Hourglass } from "react-loader-spinner";
 
 const Courses = () => {
   const dispatch = useDispatch();
   const courses = useSelector((state) => state.course?.list?.data);
-  const coursesLoder = useSelector((state) => state.course);
-  const loading = coursesLoder.loading;
+  const coursesLoader = useSelector((state) => state.course);
+  const loading = coursesLoader.loading;
 
-  const [createmodalOpen, setCreateModalOpen] = useState(false);
-  const [editmodalOpen, setEditModalOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [formInputs, setFormInputs] = useState({
-    name: "",
-    description: "",
-    level: "",
-    fees: "",
-    duration: "",
-    is_active: false,
-  });
-
   const navigate = useNavigate();
-  const { pathname } = useLocation();
-
-  const navigatePage = (path) => {
-    navigate(path);
-  };
-
-  // Handle search input change
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
 
   useEffect(() => {
-      dispatch(getAllCourses());
-  }, []);
+    dispatch(getAllCourses());
+  }, [dispatch]);
 
-  const handleOpenModal = () => {
-    setCreateModalOpen(true);
-  };
-
-  const handleEditOpenModal = () => {
-    setEditModalOpen(true);
-  };
-
-  const handleEditCloseModal = () => {
-    setEditModalOpen(false);
-  };
-
-  const handleCloseModal = () => {
-    setCreateModalOpen(false);
-  };
+  const handleOpenModal = () => setCreateModalOpen(true);
+  const handleEditOpenModal = () => setEditModalOpen(true);
+  const handleEditCloseModal = () => setEditModalOpen(false);
+  const handleCloseModal = () => setCreateModalOpen(false);
+  const handleDeleteModalClose = () => setDeleteModalOpen(false);
 
   const handleUpdate = (updatedCompany) => {
     setSelectedCourse(null);
-    handleCloseModal();
+    handleEditCloseModal();
   };
 
-  const handleDelete = (data) => {
+  const handleDelete = (course) => {
     setSelectedCourse(null);
-    handleCloseModal();
-    const companyId = data._id;
-    dispatch(deleteCoursesById(companyId));
+    handleDeleteModalClose();
+    dispatch(deleteCoursesById(course._id));
   };
 
-  const filteredCourses = courses
-    ? courses.filter((course) =>
-        course.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        course.description.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
+  const filteredCourses = courses?.filter((course) =>
+    course.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    course.description.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
 
   return (
     <Layout>
-      <section className="forum_page grey_bg pt-5">
+      <section className="courses-section grey_bg pt-5">
         <div className="container">
-          <div className="row">
-            <div className="col-lg-12 mx-auto">
-              <div className="forum_content">
-                <h3 className="mb-4 p-2 site_bg color_white">COURSES</h3>
-
-                <div className="container col-md-12">
-                  <div className="row register_form">
-                    <div className="col-lg-12">
-                      <div className="form_field add_courses mb-1 text-right">
-                        <a
-                          className="color_white blue_bg d-inline-block mr-0 p-2 rounded"
-                          // href="#"
-                          // data-toggle="modal"
-                          // data-target="#myModal"
-                          onClick={() => {
-                            handleOpenModal();
-                          }}
-                        >
-                          Add
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <div className="row mb-4">
+            <div className="col-lg-12">
+              <h3 className="site_bg text-white p-2">Courses</h3>
             </div>
           </div>
 
-          {createmodalOpen && (
+          {createModalOpen && (
             <CreateModelForm handleCloseModal={handleCloseModal} />
+          )}
+
+          {editModalOpen && selectedCourse && (
+            <EditModelForm
+              courseData={selectedCourse}
+              handleUpdate={handleUpdate}
+              handleCloseModal={handleEditCloseModal}
+            />
           )}
 
           {deleteModalOpen && selectedCourse && (
             <DeleteModel
               data={selectedCourse}
               handleDelete={handleDelete}
-              handleCloseModal={() => setDeleteModalOpen(false)}
+              handleCloseModal={handleDeleteModalClose}
             />
           )}
 
-          {editmodalOpen && selectedCourse && (
-            <EditModelForm
-              courseData={selectedCourse}
-              handleUpdate={handleUpdate}
-              handleCloseModal={() => setEditModalOpen(false)}
-            />
-          )}
-        </div>
-      </section>
+          {loading ? (
+            <div className="text-center">
+              <Hourglass
+                visible={true}
+                height={80}
+                width={80}
+                ariaLabel="loading"
+                colors={["#306cce", "#72a1ed"]}
+              />
+            </div>
+          ) : (
+            <div className="row">
+              <div className="col-lg-8">
+                <div className="search-course mb-3">
+                  <input
+                    type="text"
+                    placeholder="Search by course name or description"
+                    className="form-control"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="col-lg-4 text-right">
+                <button
+                  className="btn btn-primary"
+                  onClick={handleOpenModal}
+                >
+                  Add New Course
+                </button>
+              </div>
 
-      <div className="">
-        {loading ? (
-          <div className="text-center">
-            <Hourglass
-              visible={true}
-              height="80"
-              width="80"
-              ariaLabel="hourglass-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-              colors={["#306cce", "#72a1ed"]}
-            />
-          </div>
-        ) : (
-          <>
-            <section className="course_page grey_bg">
-              <div className="container">
-                <div className="row">
-                  <div className="col-lg-12">
-                    <div className="course_right">
-                      <div className="search_course mb-3">
-                        <input
-                          type="text"
-                          placeholder="Search Course"
-                          className="box_shadow"
-                          value={searchQuery}
-                          onChange={handleSearchChange}
+              {filteredCourses.length > 0 ? (
+                filteredCourses.map((course, index) => (
+                  <div className="col-lg-4 col-md-6 mb-3" key={index}>
+                    <div className="course-card shadow-sm">
+                      <div className="course-image">
+                        <img
+                          src={`${IMAGE_URL}/${course.image}`}
+                          alt={course.name}
+                          className="img-fluid"
                         />
-                        <i className="fas fa-search"></i>
                       </div>
+                      <div className="course-details p-3">
+                        <h5 className="mb-2">{course.name}</h5>
+                        <p>{course.description}</p>
 
-                      <div className="row">
-                        {filteredCourses &&
-                          filteredCourses.map((item, index) => {
-                            return (
-                              <div className="col-lg-4 col-md-6 mb-3" key={index}>
-                                <div className="courses_categories box_shadow">
-                                  <a
-                                    href="#"
-                                    onClick={() => {
-                                      navigatePage(
-                                        `/courses/modules/${item._id}`
-                                      );
-                                    }}
-                                  >
-                                    <img
-                                      src={`${IMAGE_URL}/${item?.image}`}
-                                      align="course-new"
-                                    />
-                                  </a>
-                                  <div className="course_sub_text p-3">
-                                    <h6 className="mb-2">
-                                      <a
-                                        href="#"
-                                        onClick={() => {
-                                          navigatePage(
-                                            `/courses/modules/${item._id}`
-                                          );
-                                        }}
-                                      >
-                                        {item?.name}
-                                      </a>
-                                    </h6>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <button
+                            className="btn btn-link text-primary"
+                            onClick={() => {
+                              setSelectedCourse(course);
+                              handleEditOpenModal();
+                            }}
+                          >
+                            <i className="fas fa-edit"></i> Edit
+                          </button>
 
-                                    <p>{item?.description}</p>
-
-                                    <div className="border-top pt-3 d-flex justify-content-between">
-                                      <a
-                                        href="#"
-                                        style={{ color: "blue" }}
-                                        onClick={() => {
-                                          handleEditOpenModal();
-                                          setSelectedCourse(item);
-                                        }}
-                                      >
-                                        <i className="fas fa-edit"></i> Edit
-                                      </a>
-
-                                      <a
-                                        href="#"
-                                        style={{ color: "red" }}
-                                        onClick={() => {
-                                          setDeleteModalOpen(true);
-                                          setSelectedCourse(item);
-                                        }}
-                                      >
-                                        <i className="fas fa-trash-alt"></i> Delete
-                                      </a>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            );
-                          })}
+                          <button
+                            className="btn btn-link text-danger"
+                            onClick={() => {
+                              setSelectedCourse(course);
+                              setDeleteModalOpen(true);
+                            }}
+                          >
+                            <i className="fas fa-trash-alt"></i> Delete
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className="col-lg-12 text-center">
+                  <h5>No courses found. Add new courses to get started.</h5>
                 </div>
-              </div>
-            </section>
-          </>
-        )}
-      </div>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
     </Layout>
   );
 };

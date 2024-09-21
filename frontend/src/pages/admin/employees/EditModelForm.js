@@ -1,377 +1,285 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Formik, Field, ErrorMessage } from "formik";
+import { Formik } from "formik";
 import { updateEmployee } from "../../../redux/actions/admin/employeeActions";
+import './CreateEmployeeForm.css'; // Custom CSS for styling
+
 const EditModelForm = ({ employeeData, handleUpdate, handleCloseModal }) => {
   const companyReducer = useSelector((state) => state.company);
   const dispatch = useDispatch();
-  const [formInputs, setFormInputs] = useState(employeeData);
 
   const companies = companyReducer?.list?.data || [];
-  const filteredCompanies = companies.map(({ _id, company_name }) => ({
+  const filteredCompanies = companies?.map(({ _id, company_name }) => ({
     _id,
     company_name,
   }));
-
-  const handleFormInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormInputs((prevInputs) => ({
-      ...prevInputs,
-      [name]: value,
-    }));
-  };
-
-  const handleFormSubmit = async (values) => {
-    handleUpdate(values);
-    const data = await dispatch(updateEmployee(values?._id, values));
-    if (data) {
-      handleCloseModal();
-    }
-  };
 
   const handleCancel = () => {
     handleCloseModal();
   };
 
-    return (
-      <div
-        className="modal fade fourm_modal show"
-        style={{ paddingRight: "17px", display: "block", background:"rgb(0 0 0 / 40%)"  }}
-        id="myModal"
-      >
-        <div className="modal-dialog">
-          <div className="modal-content" style={{ maxHeight: "700px", overflowY: "auto" }}>
-            <div className="modal-header site_bg">
-              <h4 className="modal-title color_white m-2">Update Employee</h4>
-              <button
-                onClick={handleCancel}
-                type="button"
-                className="close"
-                data-dismiss="modal"
-              >
-                &times;
-              </button>
-            </div>
-            <div className="modal-body">
-              <section className="">
-                <div className="">
-                  <div className="row m-2">
-                    <div className="col-lg-12 col-md-12 mx-auto">
-                      <div className="register_eroll">
-                        <div className="enrollment_tab">
-                          <ul className="nav nav-tabs">
-                            <li className="nav-item"></li>
-                          </ul>
-                        </div>
-                        <div className="tab-content">
-                          <div
-                            className="tab-pane active container p-0"
-                            id="business"
-                          >
-                            <div className="register_form">
-                              <Formik
-                                initialValues={formInputs}
-                                validate={(values) => {
-                                  const errors = {};
+  const handleSubmitEmployee = async (values) => {
+    await dispatch(updateEmployee(values?._id, values));
+    handleUpdate(values);
+    handleCloseModal();
+  };
 
-                                  if (!values.email) {
-                                    errors.email = "Email is required";
-                                  } else if (
-                                    !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(
-                                      values.email
-                                    )
-                                  ) {
-                                    errors.email = "Invalid email address";
-                                  }
+  return (
+    <div
+      className="modal fade show editEmployeeModal"
+      style={{ paddingRight: "17px", display: "block", background: "rgba(0, 0, 0, 0.5)" }}
+      id="editEmployeeModal"
+    >
+      <div className="modal-dialog">
+        <div className="modal-content shadow">
+          <div className="modal-header text-white">
+            <h5 className="modal-title text-white">Update Employee</h5>
+            <button
+              type="button"
+              className="close text-white"
+              onClick={handleCancel}
+            >
+              &times;
+            </button>
+          </div>
+          <div className="modal-body">
+            <Formik
+              initialValues={{
+                email: employeeData.email || "",
+                first_name: employeeData.first_name || "",
+                last_name: employeeData.last_name || "",
+                job_title: employeeData.job_title || "",
+                address: employeeData.address || "",
+                post_code: employeeData.post_code || "",
+                department: employeeData.department || "",
+                country: employeeData.country || "",
+                created_by: employeeData.created_by || "",
+              }}
+              validate={(values) => {
+                const errors = {};
+                if (!values.email) errors.email = "Email is required";
+                if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email))
+                  errors.email = "Invalid email address";
 
-                                  if (!values.job_title) {
-                                    errors.job_title = "Job Title is required";
-                                  } else if (values.job_title.length < 3) {
-                                    errors.job_title =
-                                      "Job Title must be at least 3 characters long";
-                                  } else if (values.job_title.length > 10) {
-                                    errors.job_title =
-                                      "Job Title less at least 10 characters long";
-                                  }
+                if (!values.first_name) errors.first_name = "First name is required";
+                if (!values.last_name) errors.last_name = "Last name is required";
+                if (!values.job_title) errors.job_title = "Job title is required";
+                if (!values.address) errors.address = "Address is required";
+                if (!values.post_code) errors.post_code = "Post code is required";
+                if (!values.country) errors.country = "Country is required";
+                if (!values.department) errors.department = "Department is required";
+                if (!values.created_by) errors.created_by = "Company is required";
 
-                                  if (!values.first_name) {
-                                    errors.first_name =
-                                      "First name is required";
-                                  } else if (values.first_name.length < 3) {
-                                    errors.first_name =
-                                      "First name must be at least 3 characters long";
-                                  } else if (values.first_name.length > 20) {
-                                    errors.first_name =
-                                      "First name less at least 20 characters long";
-                                  }
-
-                                  if (!values.last_name) {
-                                    errors.last_name = "Last name is required";
-                                  } else if (values.last_name.length < 3) {
-                                    errors.last_name =
-                                      "Last name must be at least 3 characters long";
-                                  } else if (values.last_name.length > 20) {
-                                    errors.last_name =
-                                      "Last name less at least 20 characters long";
-                                  }
-
-                                  if (!values.address) {
-                                    errors.address = "Address is required";
-                                  } else if (values.address.length < 3) {
-                                    errors.address =
-                                      "Address must be at least 3 characters long";
-                                  } else if (values.address.length > 30) {
-                                    errors.address =
-                                      "Address less at least 30 characters long";
-                                  }
-
-                                  if (!values.department) {
-                                    errors.department =
-                                      "Department is required";
-                                  } else if (values.department.length < 3) {
-                                    errors.department =
-                                      "Department must be at least 3 characters long";
-                                  } else if (values.department.length > 10) {
-                                    errors.department =
-                                      "Department less at least 10 characters long";
-                                  }
-
-                                  if (!values.post_code) {
-                                    errors.post_code = "Post code is required";
-                                  } else if (values.post_code.length < 3) {
-                                    errors.post_code =
-                                      "Post code must be at least 3 characters long";
-                                  } else if (values.post_code.length > 10) {
-                                    errors.post_code =
-                                      "Post code less at least 10 characters long";
-                                  }
-
-                                  if (!values.country) {
-                                    errors.country = "Country is required";
-                                  }
-
-                                  return errors;
-                                }}
-                                onSubmit={handleFormSubmit}
-                              >
-                                {({ handleSubmit, isSubmitting }) => (
-                                  <form
-                                    onSubmit={handleSubmit}
-                                    className="mt-3"
-                                  >
-                                    <div className="row">
-                                      <div className="col-lg-6">
-                                        <div className="form-group">
-                                          <label className="d-block">
-                                            First Name{" "}
-                                            <span className="require">*</span>
-                                          </label>
-                                          <Field
-                                            type="text"
-                                            name="first_name"
-                                            placeholder="First Name"
-                                            className="form-control"
-                                          />
-                                          <ErrorMessage
-                                            name="first_name"
-                                            component="div"
-                                            className="input-feedback"
-                                          />
-                                        </div>
-                                      </div>
-                                      <div className="col-lg-6">
-                                        <div className="form-group">
-                                          <label className="d-block">
-                                            Last Name{" "}
-                                            <span className="require">*</span>
-                                          </label>
-                                          <Field
-                                            type="text"
-                                            name="last_name"
-                                            placeholder="Last Name"
-                                            className="form-control"
-                                          />
-                                          <ErrorMessage
-                                            name="last_name"
-                                            component="div"
-                                            className="input-feedback"
-                                          />
-                                        </div>
-                                      </div>
-                                      <div className="col-lg-6">
-                                        <div className="form-group">
-                                          <label className="d-block">
-                                            Email Address{" "}
-                                            <span className="require">*</span>
-                                          </label>
-                                          <Field
-                                            type="email"
-                                            name="email"
-                                            placeholder="Email Address"
-                                            className="form-control"
-                                          />
-                                          <ErrorMessage
-                                            name="email"
-                                            component="div"
-                                            className="input-feedback"
-                                          />
-                                        </div>
-                                      </div>
-                                      <div className="col-lg-6">
-                                        <div className="form-group">
-                                          <label className="d-block">
-                                            Job Title{" "}
-                                            <span className="require">*</span>
-                                          </label>
-                                          <Field
-                                            type="text"
-                                            name="job_title"
-                                            placeholder="Job Title"
-                                            className="form-control"
-                                          />
-                                          <ErrorMessage
-                                            name="job_title"
-                                            component="div"
-                                            className="input-feedback"
-                                          />
-                                        </div>
-                                      </div>
-                                      <div className="col-lg-12">
-                                        <div className="form-group">
-                                          <label className="d-block">
-                                            Address{" "}
-                                            <span className="require">*</span>
-                                          </label>
-                                          <Field
-                                            type="text"
-                                            name="address"
-                                            placeholder="Home Address"
-                                            className="form-control"
-                                          />
-                                          <ErrorMessage
-                                            name="address"
-                                            component="div"
-                                            className="input-feedback"
-                                          />
-                                        </div>
-                                      </div>
-                                      <div className="col-lg-6">
-                                        <div className="form-group">
-                                          <label className="d-block">
-                                            Department{" "}
-                                            <span className="require">*</span>
-                                          </label>
-                                          <Field
-                                            type="text"
-                                            name="department"
-                                            placeholder="Department"
-                                            className="form-control"
-                                          />
-                                          <ErrorMessage
-                                            name="department"
-                                            component="div"
-                                            className="input-feedback"
-                                          />
-                                        </div>
-                                      </div>
-                                      <div className="col-lg-6">
-                                        <div className="form-group">
-                                          <label className="d-block">
-                                            Country{" "}
-                                            <span className="require">*</span>
-                                          </label>
-                                          <Field
-                                            as="select"
-                                            name="country"
-                                            className="form-control"
-                                          >
-                                            <option value="">Country</option>
-                                            <option value="USA">USA</option>
-                                            <option value="India">India</option>
-                                          </Field>
-                                          <ErrorMessage
-                                            name="country"
-                                            component="div"
-                                            className="input-feedback"
-                                          />
-                                        </div>
-                                      </div>
-                                      <div className="col-lg-6">
-                                        <div className="form-group">
-                                          <label className="d-block">
-                                            Company{" "}
-                                            <span className="require">*</span>
-                                          </label>
-                                          <Field
-                                            as="select"
-                                            name="created_by"
-                                            className="form-control"
-                                          >
-                                            <option value="">
-                                              Select Company
-                                            </option>
-                                            {filteredCompanies.map(
-                                              ({ _id, company_name }) => (
-                                                <option key={_id} value={_id}>
-                                                  {company_name}
-                                                </option>
-                                              )
-                                            )}
-                                          </Field>
-                                          <ErrorMessage
-                                            name="created_by"
-                                            component="div"
-                                            className="input-feedback"
-                                          />
-                                        </div>
-                                      </div>
-                                      <div className="col-lg-6">
-                                        <div className="form-group">
-                                          <label className="d-block">
-                                            Post Code{" "}
-                                            <span className="require">*</span>
-                                          </label>
-                                          <Field
-                                            type="text"
-                                            name="post_code"
-                                            placeholder="Post Code"
-                                            className="form-control"
-                                          />
-                                          <ErrorMessage
-                                            name="post_code"
-                                            component="div"
-                                            className="input-feedback"
-                                          />
-                                        </div>
-                                      </div>
-                                      <div className="col-lg-12">
-                                        <div className="form-btn text-center mt-3">
-                                          <button
-                                            className="text-uppercase green_bg color_white"
-                                            type="submit"
-                                            disabled={isSubmitting}
-                                          >
-                                            Update
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </form>
-                                )}
-                              </Formik>
-                            </div>
-                          </div>
-                        </div>
+                return errors;
+              }}
+              onSubmit={handleSubmitEmployee}
+            >
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                isSubmitting,
+              }) => (
+                <form onSubmit={handleSubmit}>
+                  <div className="row">
+                    {/* First Name */}
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label>First Name <span className="text-danger">*</span></label>
+                        <input
+                          type="text"
+                          name="first_name"
+                          className={`form-control ${errors.first_name && touched.first_name ? 'is-invalid' : ''}`}
+                          value={values.first_name}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="First Name"
+                        />
+                        {errors.first_name && touched.first_name && (
+                          <div className="invalid-feedback">{errors.first_name}</div>
+                        )}
                       </div>
                     </div>
+
+                    {/* Last Name */}
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label>Last Name <span className="text-danger">*</span></label>
+                        <input
+                          type="text"
+                          name="last_name"
+                          className={`form-control ${errors.last_name && touched.last_name ? 'is-invalid' : ''}`}
+                          value={values.last_name}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Last Name"
+                        />
+                        {errors.last_name && touched.last_name && (
+                          <div className="invalid-feedback">{errors.last_name}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Email */}
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label>Email Address <span className="text-danger">*</span></label>
+                        <input
+                          type="email"
+                          name="email"
+                          className={`form-control ${errors.email && touched.email ? 'is-invalid' : ''}`}
+                          value={values.email}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Email Address"
+                        />
+                        {errors.email && touched.email && (
+                          <div className="invalid-feedback">{errors.email}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Job Title */}
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label>Job Title <span className="text-danger">*</span></label>
+                        <input
+                          type="text"
+                          name="job_title"
+                          className={`form-control ${errors.job_title && touched.job_title ? 'is-invalid' : ''}`}
+                          value={values.job_title}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Job Title"
+                        />
+                        {errors.job_title && touched.job_title && (
+                          <div className="invalid-feedback">{errors.job_title}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Address */}
+                    <div className="col-md-12">
+                      <div className="form-group">
+                        <label>Address <span className="text-danger">*</span></label>
+                        <input
+                          type="text"
+                          name="address"
+                          className={`form-control ${errors.address && touched.address ? 'is-invalid' : ''}`}
+                          value={values.address}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Address"
+                        />
+                        {errors.address && touched.address && (
+                          <div className="invalid-feedback">{errors.address}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Post Code */}
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label>Post Code <span className="text-danger">*</span></label>
+                        <input
+                          type="text"
+                          name="post_code"
+                          className={`form-control ${errors.post_code && touched.post_code ? 'is-invalid' : ''}`}
+                          value={values.post_code}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Post Code"
+                        />
+                        {errors.post_code && touched.post_code && (
+                          <div className="invalid-feedback">{errors.post_code}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Country */}
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label>Country <span className="text-danger">*</span></label>
+                        <select
+                          name="country"
+                          className={`form-control ${errors.country && touched.country ? 'is-invalid' : ''}`}
+                          value={values.country}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                        >
+                          <option value="">Select Country</option>
+                          <option value="USA">USA</option>
+                          <option value="India">India</option>
+                        </select>
+                        {errors.country && touched.country && (
+                          <div className="invalid-feedback">{errors.country}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Department */}
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label>Department <span className="text-danger">*</span></label>
+                        <input
+                          type="text"
+                          name="department"
+                          className={`form-control ${errors.department && touched.department ? 'is-invalid' : ''}`}
+                          value={values.department}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Department"
+                        />
+                        {errors.department && touched.department && (
+                          <div className="invalid-feedback">{errors.department}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Company */}
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label>Company <span className="text-danger">*</span></label>
+                        <select
+                          name="created_by"
+                          className={`form-control ${errors.created_by && touched.created_by ? 'is-invalid' : ''}`}
+                          value={values.created_by}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                        >
+                          <option value="">Select Company</option>
+                          {filteredCompanies.map(({ _id, company_name }) => (
+                            <option key={_id} value={_id}>{company_name}</option>
+                          ))}
+                        </select>
+                        {errors.created_by && touched.created_by && (
+                          <div className="invalid-feedback">{errors.created_by}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Submit Button */}
+                    <div className="col-md-12 text-center mt-3">
+                      <button
+                        className="btn btn-primary"
+                        type="submit"
+                        disabled={isSubmitting}
+                      >
+                        Update Employee
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </section>
-            </div>
+                </form>
+              )}
+            </Formik>
           </div>
         </div>
       </div>
-    );
+    </div>
+  );
 };
 
 export default EditModelForm;

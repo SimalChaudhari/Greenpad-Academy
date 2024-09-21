@@ -1,0 +1,88 @@
+footer {
+    background-color: #003366;
+    color: white;
+    font-size: 14px;
+  }
+  
+  .footer_top {
+    padding: 20px 0;  /* Reduced padding */
+  }
+  
+  .footer_bottom {
+    text-align: center;
+    padding: 10px 0;
+    background-color: #002244;
+    font-size: 12px;  /* Smaller font size */
+  }
+  
+  .footer_column {
+    margin-bottom: 20px;
+  }
+  
+  .footer_logo {
+    max-width: 120px;
+    height: auto;
+  }
+  
+  .footer_description {
+    margin-top: 10px;
+    font-size: 12px;  /* Reduce font size */
+    line-height: 18px; /* Reduced line-height */
+  }
+  
+  .social_icon {
+    margin-top: 10px;
+  }
+  
+  .social_icon li {
+    display: inline-block;
+    margin-right: 5px;
+  }
+  
+  .social_icon li a {
+    color: white;
+    font-size: 16px;
+  }
+  
+  .social_icon li a:hover {
+    color: #72a1ed;
+  }
+  
+  .links {
+    padding: 0;
+  }
+  
+  .links li {
+    list-style: none;
+    margin-bottom: 8px;
+  }
+  
+  .links li a {
+    color: white;
+    text-decoration: none;
+    cursor: pointer !important;
+  }
+  
+  .links li a:hover {
+    color: #72a1ed;
+  }
+  
+  .contact i {
+    margin-right: 10px;
+  }
+  
+  .contact a {
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+  }
+  
+  .contact a:hover {
+    color: #72a1ed;
+  }
+
+  body h4 {
+    font-size: 20px;
+    color: #ffff !important;
+    margin-bottom: 10px;
+}

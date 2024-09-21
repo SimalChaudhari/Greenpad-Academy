@@ -7,50 +7,50 @@
     align-items: center;
   }
   
-  .card {
+  .sign-in-section .card {
     background-color: rgba(255, 255, 255, 0.85); /* Semi-transparent background for the form */
     border-radius: 10px;
   }
   
-  .form-group input {
+  .sign-in-section .form-group input {
     padding: 10px;
     border-radius: 5px;
   }
   
-  .btn {
+  .sign-in-section .btn {
     padding: 10px 20px;
     font-size: 16px;
   }
   
-  .additional-links {
+  .sign-in-section .additional-links {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
   }
   
-  .additional-links a {
+  .sign-in-section .additional-links a {
     color: #007bff;
     text-decoration: none;
   }
   
-  .additional-links a:hover {
+  .sign-in-section .additional-links a:hover {
     text-decoration: underline;
   }
   
-  .separator {
+  .sign-in-section .separator {
     margin: 0 10px;
   }
   
   @media (max-width: 768px) {
-    .card {
+    .sign-in-section .card {
       padding: 20px;
     }
   
-    .form-group input {
+    .sign-in-section .form-group input {
       padding: 8px;
     }
   
-    .btn {
+    .sign-in-section .btn {
       padding: 10px;
     }
   }

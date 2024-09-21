@@ -1,196 +1,142 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { Formik } from "formik";
 import { createPlans } from "../../../redux/actions/Plans/plansActions";
+import './CreatePlanForm.css'; // Custom CSS for the form, ensure to style it similarly to Create Company
 
-const CreateModelForm = ({ companyData, handleUpdate, handleCloseModal }) => {
+const CreateModelForm = ({ handleCloseModal }) => {
   const dispatch = useDispatch();
-  // const companyReducer = useSelector((state) => state.company);
-  const [formInputs, setFormInputs] = useState(companyData);
-
-  const handleFormInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormInputs((prevInputs) => ({
-      ...prevInputs,
-      [name]: value,
-    }));
-  };
-
-  useEffect(() => {
-    // dispatch(getAllCompanies(filter));
-  }, []);
-
-  const handleFormSubmit = (values) => {
-    handleUpdate(values);
-    // dispatch(editCompanyById(values));
-  };
 
   const handleCancel = () => {
     handleCloseModal();
   };
 
-  const createCourse = async (values) => {
+  const createPlan = async (values) => {
     const formData = new FormData();
     formData.append("file", values.file);
     formData.append("title", values.title);
 
     dispatch(createPlans(formData));
-    handleCloseModal(); // Close the modal
+    handleCloseModal(); // Close the modal after creating a plan
   };
 
   return (
     <div
-      className="modal fade fourm_modal show"
-      style={{ paddingRight: "17px", display: "block", background:"rgb(0 0 0 / 40%)"  }}
-      id="myModal">
+      className="modal fade show createPlanModal"
+      style={{ paddingRight: "17px", display: "block", background: "rgba(0, 0, 0, 0.5)" }}
+      id="createPlanModal"
+    >
       <div className="modal-dialog">
-        <div className="modal-content">
-          <div className="modal-header site_bg">
-            <h4 className="modal-title color_white p-2">Create Plan</h4>
+        <div className="modal-content shadow">
+          <div className="modal-header text-white site_bg">
+            <h5 className="modal-title text-white">Create Plan</h5>
             <button
-              onClick={handleCancel}
               type="button"
-              className="close"
-              data-dismiss="modal">
+              className="close text-white"
+              onClick={handleCancel}
+            >
               &times;
             </button>
           </div>
 
           <div className="modal-body">
-            <section className="">
-              <div className="">
-                <div className="row m-2">
-                  <div className="col-lg-12 col-md-12 mx-auto">
-                    <div className="register_eroll">
-                      <div className="enrollment_tab">
-                        <ul className="nav nav-tabs">
-                          <li className="nav-item"></li>
-                        </ul>
-                      </div>
-                      <div className="tab-content">
-                        <div
-                          className="tab-pane active container p-0"
-                          id="business">
-                          <div className="register_form">
-                            <Formik
-                              initialValues={{
-                                title: "",
-                                file: "",
-                              }}
-                              validate={(values) => {
-                                const errors = {};
+            <Formik
+              initialValues={{
+                title: "",
+                file: "",
+              }}
+              validate={(values) => {
+                const errors = {};
+                if (!values.title) {
+                  errors.title = "Title is required";
+                } else if (values.title.length < 3) {
+                  errors.title = "Title must be at least 3 characters long";
+                } else if (values.title.length > 50) {
+                  errors.title = "Title must be less than 50 characters long";
+                }
 
-                                if (!values.title) {
-                                  errors.title = "Title is required";
-                                } else if (values.title.length < 3) {
-                                  errors.title =
-                                    "Title must be at least 3 characters long";
-                                } else if (values.title.length > 10) {
-                                  errors.title =
-                                    "Title less at least 10 characters long";
-                                }
+                if (!values.file) {
+                  errors.file = "File is required";
+                }
 
-                                if (!values.file) {
-                                  errors.file = "File is required";
-                                }
-
-                                return errors;
-                              }}
-                              onSubmit={createCourse}>
-                              {({
-                                values,
-                                errors,
-                                touched,
-                                handleChange,
-                                handleBlur,
-                                handleSubmit,
-                                setFieldValue,
-                                isSubmitting,
-                              }) => (
-                                <form onSubmit={handleSubmit}>
-                                  <h4 className="mb-3 mt-3 text-uppercase">
-                                    Add plan
-                                  </h4>
-                                  <div className="row">
-                                    <div className="col-lg-12">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Title{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <input
-                                          type="text"
-                                          name="title"
-                                          value={values.title}
-                                          onBlur={handleBlur}
-                                          onChange={handleChange}
-                                          placeholder="Title"
-                                          className={
-                                            errors.title && touched.title
-                                              ? "error"
-                                              : ""
-                                          }
-                                        />
-                                        {errors.title && touched.title && (
-                                          <div className="input-feedback">
-                                            {errors.title}
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-
-                                    <div className="col-lg-12">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          File{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <input
-                                          type="file"
-                                          name="file"
-                                          accept="application/pdf" // Accept only PDF files
-                                          onChange={(event) => {
-                                            const file =
-                                              event.currentTarget.files[0];
-                                            setFieldValue("file", file);
-                                          }}
-                                          onBlur={handleBlur}
-                                          className={
-                                            errors.file && touched.file
-                                              ? "error"
-                                              : ""
-                                          }
-                                        />
-                                      </div>
-                                    </div>
-                                    {errors.file && touched.file && (
-                                      <div className="input-feedback">
-                                        {errors.file}
-                                      </div>
-                                    )}
-
-                                    <div className="col-lg-12">
-                                      <div className="form-btn text-center mt-3">
-                                        <button
-                                          className="text-uppercase green_bg color_white"
-                                          type="submit"
-                                          disabled={isSubmitting}>
-                                          Submit
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </form>
-                              )}
-                            </Formik>
-                          </div>
-                        </div>
+                return errors;
+              }}
+              onSubmit={createPlan}
+            >
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                setFieldValue,
+                isSubmitting,
+              }) => (
+                <form onSubmit={handleSubmit}>
+                  <div className="row">
+                    {/* Title Input */}
+                    <div className="col-md-12">
+                      <div className="form-group">
+                        <label>
+                          Plan Title <span className="text-danger">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="title"
+                          value={values.title}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Enter plan title"
+                          className={`form-control ${
+                            errors.title && touched.title ? "is-invalid" : ""
+                          }`}
+                        />
+                        {errors.title && touched.title && (
+                          <div className="invalid-feedback">{errors.title}</div>
+                        )}
                       </div>
                     </div>
+
+                    {/* File Upload */}
+                    <div className="col-md-12">
+                      <div className="form-group">
+                        <label>
+                          Upload File <span className="text-danger">*</span>
+                        </label>
+                        <input
+                          type="file"
+                          name="file"
+                          accept="application/pdf"
+                          onChange={(event) => {
+                            const file = event.currentTarget.files[0];
+                            setFieldValue("file", file);
+                          }}
+                          onBlur={handleBlur}
+                          className={`form-control ${
+                            errors.file && touched.file ? "is-invalid" : ""
+                          }`}
+                        />
+                        {errors.file && touched.file && (
+                          <div className="invalid-feedback">{errors.file}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Submit Button */}
+                    <div className="col-md-12 text-center">
+                      <button
+                        type="submit"
+                        className="btn btn-primary mt-3"
+                        disabled={isSubmitting}
+                      >
+                        Submit
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </section>
+                </form>
+              )}
+            </Formik>
           </div>
         </div>
       </div>

@@ -2,35 +2,27 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 function CompanyMenu() {
-    const { pathname } = useLocation();
-    const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
 
+  // Helper function to generate menu items
+  const createMenuItem = (label, path, activePaths = []) => {
+    const isActive = pathname === path || activePaths.some(ap => pathname.startsWith(ap));
     return (
-        <>
-            <li className={pathname === '/employees' || pathname.startsWith('/employees/view/') ? `nav-item active` : `nav-item`}>
-                <a
-                    className="nav-link"
-                    onClick={() => {
-                        navigate("/employees");
-                    }}
-                >
-                    Employees
-                </a>
-            </li>
-
-            <li className={pathname === '/courses' || pathname.startsWith('/courses') ? `nav-item active` : `nav-item`}>
-                <a
-                    className="nav-link"
-                    onClick={() => {
-                        navigate("/courses");
-                    }}
-                >
-                    Courses
-                </a>
-            </li>
-
-        </>
+      <li className={`nav-item ${isActive ? "active" : ""}`}>
+        <a className="nav-link" onClick={() => navigate(path)}>
+          {label}
+        </a>
+      </li>
     );
+  };
+
+  return (
+    <>
+      {createMenuItem("Employees", "/employees", ["/employees/view/"])}
+      {createMenuItem("Courses", "/courses", ["/courses"])}
+    </>
+  );
 }
 
 export default CompanyMenu;

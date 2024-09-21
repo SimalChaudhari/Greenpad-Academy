@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Layout from "../../../Components/Layout.js";
 import { getAllEmployeeCourses } from "../../../redux/actions/employee/courssActions";
@@ -13,10 +13,29 @@ const EmployeeHome = () => {
   const auth = useSelector((state) => state?.useremployee);
   const loading = coursesLoder.loading;
   const authLoading = auth.loading;
+// Array of background images
+const backgroundImages = [
+  "assets/images/banner.jpg",
+  "assets/images/banner1.jpg",
+  "assets/images/banner2.jpg",
+  "assets/images/banner3.jpg",
+];
+
+const [currentBgImage, setCurrentBgImage] = useState(backgroundImages[0]);
 
   useEffect(() => {
       dispatch(getAllEmployeeCourses())
-  }, []);
+      // Change background every 5 seconds
+    const intervalId = setInterval(() => {
+      setCurrentBgImage((prevImage) => {
+        const currentIndex = backgroundImages.indexOf(prevImage);
+        const nextIndex = (currentIndex + 1) % backgroundImages.length;
+        return backgroundImages[nextIndex];
+      });
+    }, 5000); // Change every 5 seconds
+
+    return () => clearInterval(intervalId); // Clear interval on unmount
+  }, [dispatch]);
 
   const navigate = useNavigate();
   const navigatePage = (path) => {
@@ -47,7 +66,8 @@ const EmployeeHome = () => {
             <section className="home_banner">
               <div className="academy_slider">
                 <div>
-                  <img src="assets/images/banner.jpg" alt="banner" />
+                  
+                  <img src={currentBgImage} alt="banner" />
                   <div className="slider_text">
                     <h3 className="mb-3">WELCOME TO GREENPAD ACADEMY</h3>
                     <p>

@@ -1,308 +1,221 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Formik, Field, ErrorMessage } from "formik";
-import {
-  getAllCompanies,
-  editCompanyById,
-} from "../../../redux/actions/admin/companyActions";
+import { getAllCompanies, editCompanyById } from "../../../redux/actions/admin/companyActions";
 import Select from "react-select";
+import './style.css'; // Custom CSS for consistent styling
 
 const EditModelForm = ({ companyData, handleUpdate, handleCloseModal }) => {
   const dispatch = useDispatch();
   const coursesReducer = useSelector((state) => state.course?.list);
   const [selectedCourses, setSelectedCourses] = useState([]);
-  const [formInputs, setFormInputs] = useState(companyData);
 
+  // Course options for the multi-select dropdown
   const coursesOptions = coursesReducer?.data?.map((course) => ({
-      value: course._id,
-      label: course.name,
-    })) || [];
-
-  const handleFormInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormInputs((prevInputs) => ({
-      ...prevInputs,
-      [name]: value,
-    }));
-  };
+    value: course._id,
+    label: course.name,
+  })) || [];
 
   useEffect(() => {
     dispatch(getAllCompanies());
-    setSelectedCourses(companyData?.courses?.map(item => ({ "value": item?._id, "label": item?.name })));
-
+    // Initialize selected courses from company data
+    setSelectedCourses(companyData?.courses?.map((item) => ({
+      value: item?._id,
+      label: item?.name,
+    })));
   }, [companyData]);
 
   const handleFormSubmit = (values) => {
-    handleUpdate(values);    
     const selectedCourseValues = selectedCourses.map((course) => course.value);
-
-    // Combine the selected course values with the other form values
     const formData = {
       ...values,
       courses: selectedCourseValues,
     };
-
-    // Now you can log the formData which includes the selected courses' values
     dispatch(editCompanyById(companyData?._id, formData));
+    handleUpdate(formData);  // Update the parent component
   };
 
   const handleCancel = () => {
     handleCloseModal();
   };
 
-  const handleCourseChange = (selectedOptions) => {
-    setSelectedCourses(selectedOptions);
-  };
-
   return (
     <div
-      className="modal fade fourm_modal show"
-      style={{ paddingRight: "17px", display: "block", background:"rgb(0 0 0 / 40%)"  }}
-      id="myModal"
+      className="modal fade show edit-company-modal"
+      style={{ paddingRight: "17px", display: "block", background: "rgba(0, 0, 0, 0.5)" }}
+      id="editCompanyModal"
     >
       <div className="modal-dialog">
-        <div className="modal-content" style={{ maxHeight: "700px", overflowY: "auto" }}>
-          <div className="modal-header site_bg">
-            <h4 className="modal-title color_white p-2">Update Company</h4>
+        <div className="modal-content shadow">
+          <div className="modal-header text-white">
+            <h5 className="modal-title text-white">Update Company</h5>
             <button
-              onClick={handleCancel}
               type="button"
-              className="close"
-              data-dismiss="modal"
+              className="close text-white"
+              onClick={handleCancel}
             >
               &times;
             </button>
           </div>
           <div className="modal-body">
-            <section className="">
-              <div className="">
-                <div className="row m-2">
-                  <div className="col-lg-12 col-md-12 mx-auto">
-                    <div className="register_eroll">
-                      <div className="enrollment_tab">
-                        <ul className="nav nav-tabs">
-                          <li className="nav-item"></li>
-                        </ul>
-                      </div>
-                      <div className="tab-content">
-                        <div
-                          className="tab-pane active container p-0"
-                          id="business"
-                        >
-                          <div className="register_form">
-                            <Formik
-                            enableReinitialize
-                            initialValues={{
-                              company_name:companyData?.company_name ? companyData?.company_name : "",
-                              email: companyData?.email ? companyData?.email : "",
-                              address: companyData?.address ? companyData?.address : "",  
-                              post_code: companyData?.post_code ? companyData?.post_code : "",  
-                              country: companyData?.country ? companyData?.country : "",  
-                              courses: selectedCourses, // Initialize courses as an empty array
-                            }}
-                              validate={(values) => {
-                                const errors = {};
-
-                                if (!values.email) {
-                                  errors.email = "Email is required";
-                                } else if (
-                                  !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(
-                                    values.email
-                                  )
-                                ) {
-                                  errors.email = "Invalid email address";
-                                }
-
-                                if (!values.company_name) {
-                                  errors.company_name =
-                                    "Company name is required";
-                                } else if (values.company_name.length < 3) {
-                                  errors.company_name =
-                                    "Company Name must be at least 3 characters long";
-                                } else if (values.company_name.length > 20) {
-                                  errors.company_name =
-                                    "Company Name less at least 20 characters long";
-                                }
-
-                                if (!values.address) {
-                                  errors.address = "Address is required";
-                                } else if (values.address.length < 3) {
-                                  errors.address =
-                                    "Address must be at least 3 characters long";
-                                } else if (values.address.length > 30) {
-                                  errors.address =
-                                    "Address less at least 30 characters long";
-                                }
-
-                                if (!values.post_code) {
-                                  errors.post_code = "Post code is required";
-                                } else if (values.post_code.length < 3) {
-                                  errors.post_code =
-                                    "Post code must be at least 3 characters long";
-                                } else if (values.post_code.length > 10) {
-                                  errors.post_code =
-                                    "Post code less at least 10 characters long";
-                                }
-
-                                if (!values.country) {
-                                  errors.country = "Country is required";
-                                }
-
-                                // Validate courses field
-                                // if (!values.courses || values.courses.length === 0) {
-                                //   errors.courses = "At least one course must be selected";
-                                // }
-                                return errors;
-                              }}
-                              onSubmit={handleFormSubmit}
-                            >
-                              {({ handleSubmit, isSubmitting }) => (
-                                <form onSubmit={handleSubmit} className="p-2">
-                                  <div className="row">
-                                    <div className="col-lg-6">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Company Name{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <Field
-                                          type="text"
-                                          name="company_name"
-                                          placeholder="Company Name"
-                                          className="form-control"
-                                        />
-                                        <ErrorMessage
-                                          name="company_name"
-                                          component="div"
-                                          className="input-feedback"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="col-lg-6">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Email Address{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <Field
-                                          type="email"
-                                          name="email"
-                                          placeholder="Email Address"
-                                          className="form-control"
-                                        />
-                                        <ErrorMessage
-                                          name="email"
-                                          component="div"
-                                          className="input-feedback"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="col-lg-12">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Address{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <Field
-                                          type="text"
-                                          name="address"
-                                          placeholder="Home Address"
-                                          className="form-control"
-                                        />
-                                        <ErrorMessage
-                                          name="address"
-                                          component="div"
-                                          className="input-feedback"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="col-lg-6">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Country{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <Field
-                                          as="select"
-                                          name="country"
-                                          className="form-control"
-                                        >
-                                          <option value="">Country</option>
-                                          <option value="USA">USA</option>
-                                          <option value="India">India</option>
-                                        </Field>
-                                        <ErrorMessage
-                                          name="country"
-                                          component="div"
-                                          className="input-feedback"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="col-lg-6">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Post Code{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <Field
-                                          type="number"
-                                          name="post_code"
-                                          placeholder="Post Code"
-                                          className="form-control"
-                                        />
-                                        <ErrorMessage
-                                          name="post_code"
-                                          component="div"
-                                          className="input-feedback"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="col-lg-12">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Courses{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <Select
-                                          value={selectedCourses}
-                                          onChange={handleCourseChange}
-                                          options={coursesOptions}
-                                          name="courses"
-                                          isMulti={true}
-                                          isSearchable
-                                        />
-
-                                        {/* {errors.courses && touched.courses && (
-                                          <div className="input-feedback">
-                                            {errors.courses}
-                                          </div>
-                                        )} */}
-                                      </div>
-                                    </div>
-
-                                    <div className="col-lg-12">
-                                      <div className="form-btn text-center mt-3">
-                                        <button
-                                          className="text-uppercase green_bg color_white"
-                                          type="submit"
-                                          disabled={isSubmitting}
-                                        >
-                                          Update
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </form>
-                              )}
-                            </Formik>
-                          </div>
-                        </div>
+            <Formik
+              enableReinitialize
+              initialValues={{
+                company_name: companyData?.company_name || "",
+                email: companyData?.email || "",
+                address: companyData?.address || "",
+                post_code: companyData?.post_code || "",
+                country: companyData?.country || "",
+                courses: selectedCourses,
+              }}
+              validate={(values) => {
+                const errors = {};
+                if (!values.email) {
+                  errors.email = "Email is required";
+                } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
+                  errors.email = "Invalid email address";
+                }
+                if (!values.company_name) {
+                  errors.company_name = "Company Name is required";
+                }
+                if (!values.address) {
+                  errors.address = "Address is required";
+                }
+                if (!values.post_code) {
+                  errors.post_code = "Post code is required";
+                }
+                if (!values.country) {
+                  errors.country = "Country is required";
+                }
+                return errors;
+              }}
+              onSubmit={handleFormSubmit}
+            >
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                isSubmitting,
+              }) => (
+                <form onSubmit={handleSubmit}>
+                  <h4 className="mb-3 mt-3 text-uppercase">Update Company Details</h4>
+                  <div className="row">
+                    {/* Company Name */}
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label>Company Name <span className="text-danger">*</span></label>
+                        <Field
+                          type="text"
+                          name="company_name"
+                          className={`form-control ${errors.company_name && touched.company_name ? "is-invalid" : ""}`}
+                          value={values.company_name}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Company Name"
+                        />
+                        <ErrorMessage name="company_name" component="div" className="invalid-feedback" />
                       </div>
                     </div>
+
+                    {/* Email Address */}
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label>Email Address <span className="text-danger">*</span></label>
+                        <Field
+                          type="email"
+                          name="email"
+                          className={`form-control ${errors.email && touched.email ? "is-invalid" : ""}`}
+                          value={values.email}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Email Address"
+                        />
+                        <ErrorMessage name="email" component="div" className="invalid-feedback" />
+                      </div>
+                    </div>
+
+                    {/* Address */}
+                    <div className="col-md-12">
+                      <div className="form-group">
+                        <label>Address <span className="text-danger">*</span></label>
+                        <Field
+                          type="text"
+                          name="address"
+                          className={`form-control ${errors.address && touched.address ? "is-invalid" : ""}`}
+                          value={values.address}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Address"
+                        />
+                        <ErrorMessage name="address" component="div" className="invalid-feedback" />
+                      </div>
+                    </div>
+
+                    {/* Country */}
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label>Country <span className="text-danger">*</span></label>
+                        <Field
+                          as="select"
+                          name="country"
+                          className={`form-control ${errors.country && touched.country ? "is-invalid" : ""}`}
+                          value={values.country}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                        >
+                          <option value="">Select Country</option>
+                          <option value="USA">USA</option>
+                          <option value="India">India</option>
+                        </Field>
+                        <ErrorMessage name="country" component="div" className="invalid-feedback" />
+                      </div>
+                    </div>
+
+                    {/* Post Code */}
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label>Post Code <span className="text-danger">*</span></label>
+                        <Field
+                          type="text"
+                          name="post_code"
+                          className={`form-control ${errors.post_code && touched.post_code ? "is-invalid" : ""}`}
+                          value={values.post_code}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Post Code"
+                        />
+                        <ErrorMessage name="post_code" component="div" className="invalid-feedback" />
+                      </div>
+                    </div>
+
+                    {/* Courses Multi-Select */}
+                    <div className="col-md-12">
+                      <div className="form-group">
+                        <label>Courses <span className="text-danger">*</span></label>
+                        <Select
+                          value={selectedCourses}
+                          onChange={setSelectedCourses}
+                          options={coursesOptions}
+                          isMulti
+                          isSearchable
+                          placeholder="Select Courses"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Submit Button */}
+                    <div className="col-md-12 text-center mt-3">
+                      <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                        Update Company
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </section>
+                </form>
+              )}
+            </Formik>
           </div>
         </div>
       </div>

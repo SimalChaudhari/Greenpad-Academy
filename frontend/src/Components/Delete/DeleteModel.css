@@ -1,0 +1,33 @@
+.delete-modal .modal-content {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .delete-modal .modal-header {
+    background-color: #f7716a; /* Bootstrap danger color */
+    color: white;
+  }
+  
+  .delete-modal .modal-body {
+    padding: 1.5rem;
+  }
+  
+  .delete-modal .modal-footer {
+    padding: 1rem;
+  }
+  
+  .delete-modal .btn {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .delete-modal .btn-danger {
+    background-color: #f7716a;
+    border-color: #f7716a;
+  }
+  
+  .delete-modal .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
+  

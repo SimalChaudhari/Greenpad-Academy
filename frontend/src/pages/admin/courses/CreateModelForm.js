@@ -1,34 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Formik } from "formik";
 import { CreateCourse } from "../../../redux/actions/admin/courssActions";
 
-const CreateModelForm = ({ companyData, handleUpdate, handleCloseModal }) => {
+const CreateModelForm = ({ handleCloseModal }) => {
   const dispatch = useDispatch();
-  // const companyReducer = useSelector((state) => state.company);
-  const [formInputs, setFormInputs] = useState(companyData);
   const [previewImage, setPreviewImage] = useState(null);
-
-  const handleFormInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormInputs((prevInputs) => ({
-      ...prevInputs,
-      [name]: value,
-    }));
-  };
-
-  useEffect(() => {
-    // dispatch(getAllCompanies(filter));
-  }, []);
-
-  const handleFormSubmit = (values) => {
-    handleUpdate(values);
-    // dispatch(editCompanyById(values));
-  };
-
-  const handleCancel = () => {
-    handleCloseModal();
-  };
 
   const createCourse = async (values) => {
     const formData = new FormData();
@@ -40,343 +17,212 @@ const CreateModelForm = ({ companyData, handleUpdate, handleCloseModal }) => {
     formData.append("fees", values.fees);
 
     dispatch(CreateCourse(formData));
-    handleCloseModal(); // Close the modal
+    handleCloseModal(); // Close the modal after submission
+  };
+
+  const handleCancel = () => {
+    handleCloseModal();
   };
 
   return (
     <div
-      className="modal fade fourm_modal show"
-      style={{ paddingRight: "17px", display: "block", background:"rgb(0 0 0 / 40%)"  }}
-      id="myModal">
+      className="modal fade show"
+      style={{
+        paddingRight: "17px",
+        display: "block",
+        background: "rgba(0, 0, 0, 0.5)",
+      }}
+      id="myModal"
+    >
       <div className="modal-dialog">
         <div className="modal-content" style={{ maxHeight: "700px", overflowY: "auto" }}>
           <div className="modal-header site_bg">
-            <h4 className="modal-title color_white p-2">Create Course</h4>
+            <h4 className="modal-title text-white">Create Course</h4>
             <button
               onClick={handleCancel}
               type="button"
-              className="close"
-              data-dismiss="modal">
+              className="close text-white"
+              data-dismiss="modal"
+            >
               &times;
             </button>
           </div>
 
           <div className="modal-body">
-            <section className="">
-              <div className="">
-                <div className="row m-2">
-                  <div className="col-lg-12 col-md-12 mx-auto">
-                    <div className="register_eroll">
-                      <div className="enrollment_tab">
-                        <ul className="nav nav-tabs">
-                          <li className="nav-item"></li>
-                        </ul>
+            <Formik
+              initialValues={{
+                name: "",
+                description: "",
+                level: "",
+                fees: "",
+                duration: "",
+                image: "",
+              }}
+              validate={(values) => {
+                const errors = {};
+                if (!values.description) errors.description = "Description is required";
+                if (!values.name) errors.name = "Name is required";
+                if (!values.level) errors.level = "Level is required";
+                if (!values.fees) errors.fees = "Fees is required";
+                if (!values.duration) errors.duration = "Duration is required";
+                if (!values.image) errors.image = "Image is required";
+                return errors;
+              }}
+              onSubmit={createCourse}
+            >
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                setFieldValue,
+                isSubmitting,
+              }) => (
+                <form onSubmit={handleSubmit}>
+                  <h4 className="mb-3 text-uppercase">Add Course</h4>
+                  <div className="row">
+                    {/* Name Field */}
+                    <div className="col-lg-6">
+                      <div className="form-group">
+                        <label className="d-block">Name <span className="text-danger">*</span></label>
+                        <input
+                          type="text"
+                          name="name"
+                          value={values.name}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Course Name"
+                          className={`form-control ${errors.name && touched.name ? 'is-invalid' : ''}`}
+                        />
+                        {errors.name && touched.name && (
+                          <div className="invalid-feedback">{errors.name}</div>
+                        )}
                       </div>
-                      <div className="tab-content">
-                        <div
-                          className="tab-pane active container p-0"
-                          id="business">
-                          <div className="register_form">
-                            <Formik
-                              initialValues={{
-                                name: "",
-                                description: "",
-                                level: "",
-                                fees: "",
-                                duration: "",
-                                image: "",
-                              }}
-                              validate={(values) => {
-                                const errors = {};
+                    </div>
 
-                                if (!values.description) {
-                                  errors.description =
-                                    "Description is required";
-                                } else if (values.description.length < 3) {
-                                  errors.description =
-                                    "Description must be at least 3 characters long";
-                                } else if (values.description.length > 30000) {
-                                  errors.description =
-                                    "Description less at least 30000 characters long";
-                                }
+                    {/* Level Field */}
+                    <div className="col-lg-6">
+                      <div className="form-group">
+                        <label className="d-block">Level <span className="text-danger">*</span></label>
+                        <input
+                          type="text"
+                          name="level"
+                          value={values.level}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Course Level"
+                          className={`form-control ${errors.level && touched.level ? 'is-invalid' : ''}`}
+                        />
+                        {errors.level && touched.level && (
+                          <div className="invalid-feedback">{errors.level}</div>
+                        )}
+                      </div>
+                    </div>
 
-                                if (!values.name) {
-                                  errors.name = "Name is required";
-                                } else if (values.name.length < 3) {
-                                  errors.name =
-                                    "Name must be at least 3 characters long";
-                                } else if (values.name.length > 10) {
-                                  errors.name =
-                                    "Name less at least 10 characters long";
-                                }
+                    {/* Description Field */}
+                    <div className="col-lg-12">
+                      <div className="form-group">
+                        <label className="d-block">Description <span className="text-danger">*</span></label>
+                        <textarea
+                          name="description"
+                          value={values.description}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Course Description"
+                          className={`form-control ${errors.description && touched.description ? 'is-invalid' : ''}`}
+                        />
+                        {errors.description && touched.description && (
+                          <div className="invalid-feedback">{errors.description}</div>
+                        )}
+                      </div>
+                    </div>
 
-                                if (!values.level) {
-                                  errors.level = "Level is required";
-                                } else if (values.level.length < 3) {
-                                  errors.level =
-                                    "Level must be at least 3 characters long";
-                                } else if (values.level.length > 10) {
-                                  errors.level =
-                                    "Level less at least 10 characters long";
-                                }
+                    {/* Fees Field */}
+                    <div className="col-lg-6">
+                      <div className="form-group">
+                        <label className="d-block">Fees <span className="text-danger">*</span></label>
+                        <input
+                          type="number"
+                          name="fees"
+                          value={values.fees}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Course Fees"
+                          className={`form-control ${errors.fees && touched.fees ? 'is-invalid' : ''}`}
+                        />
+                        {errors.fees && touched.fees && (
+                          <div className="invalid-feedback">{errors.fees}</div>
+                        )}
+                      </div>
+                    </div>
 
-                                if (!values.fees) {
-                                  errors.fees = "Fees is required";
-                                } else if (values.fees.length < 1) {
-                                  errors.fees =
-                                    "Fees must be at least 1 characters long";
-                                } else if (values.fees.length > 6) {
-                                  errors.fees =
-                                    "Fees less at least 6 characters long";
-                                }
+                    {/* Duration Field */}
+                    <div className="col-lg-6">
+                      <div className="form-group">
+                        <label className="d-block">Duration <span className="text-danger">*</span></label>
+                        <input
+                          type="text"
+                          name="duration"
+                          value={values.duration}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder="Course Duration"
+                          className={`form-control ${errors.duration && touched.duration ? 'is-invalid' : ''}`}
+                        />
+                        {errors.duration && touched.duration && (
+                          <div className="invalid-feedback">{errors.duration}</div>
+                        )}
+                      </div>
+                    </div>
 
-                                if (!values.duration) {
-                                  errors.duration = "Duration is required";
-                                } else if (values.duration.length < 3) {
-                                  errors.duration =
-                                    "Duration must be at least 3 characters long";
-                                } else if (values.duration.length > 20) {
-                                  errors.duration =
-                                    "Duration less at least 20 characters long";
-                                }
-
-                                if (!values.image) {
-                                  errors.image = "Image is required";
-                                }
-
-                                return errors;
-                              }}
-                              onSubmit={createCourse}>
-                              {({
-                                values,
-                                errors,
-                                touched,
-                                handleChange,
-                                handleBlur,
-                                handleSubmit,
-                                setFieldValue,
-                                isSubmitting,
-                              }) => (
-                                <form onSubmit={handleSubmit}>
-                                  <h4 className="mb-3 mt-3 text-uppercase">
-                                    Add course
-                                  </h4>
-                                  <div className="row">
-                                    <div className="col-lg-6">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Name{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <input
-                                          type="text"
-                                          name="name"
-                                          value={values.name}
-                                          onBlur={handleBlur}
-                                          onChange={handleChange}
-                                          placeholder="Name"
-                                          className={
-                                            errors.name && touched.name
-                                              ? "error"
-                                              : ""
-                                          }
-                                        />
-                                        {errors.name && touched.name && (
-                                          <div className="input-feedback">
-                                            {errors.name}
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-
-                                    <div className="col-lg-6">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Level{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <input
-                                          type="text"
-                                          name="level"
-                                          value={values.level}
-                                          onBlur={handleBlur}
-                                          onChange={handleChange}
-                                          placeholder="Level"
-                                          className={
-                                            errors.level && touched.level
-                                              ? "error"
-                                              : ""
-                                          }
-                                        />
-                                        {errors.level && touched.level && (
-                                          <div className="input-feedback">
-                                            {errors.level}
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-
-                                    <div className="col-lg-12">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Description{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <input
-                                          type="description"
-                                          name="description"
-                                          value={values.description}
-                                          onBlur={handleBlur}
-                                          onChange={handleChange}
-                                          placeholder="Description"
-                                          className={
-                                            errors.description &&
-                                            touched.description
-                                              ? "error"
-                                              : ""
-                                          }
-                                        />
-                                        {errors.description &&
-                                          touched.description && (
-                                            <div className="input-feedback">
-                                              {errors.description}
-                                            </div>
-                                          )}
-                                      </div>
-                                    </div>
-
-                                    <div className="col-lg-6">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Fees{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <input
-                                          type="number"
-                                          name="fees"
-                                          value={values.fees}
-                                          onBlur={handleBlur}
-                                          onChange={handleChange}
-                                          placeholder="Fees"
-                                          className={
-                                            errors.fees && touched.fees
-                                              ? "error"
-                                              : ""
-                                          }
-                                        />
-                                        {errors.fees && touched.fees && (
-                                          <div className="input-feedback">
-                                            {errors.fees}
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-
-                                    <div className="col-lg-6">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Duration{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <input
-                                          type="text"
-                                          name="duration"
-                                          value={values.duration}
-                                          onBlur={handleBlur}
-                                          onChange={handleChange}
-                                          placeholder="Duration"
-                                          className={
-                                            errors.duration && touched.duration
-                                              ? "error"
-                                              : ""
-                                          }
-                                        />
-                                        {errors.duration &&
-                                          touched.duration && (
-                                            <div className="input-feedback">
-                                              {errors.duration}
-                                            </div>
-                                          )}
-                                      </div>
-                                    </div>
-
-                                    <div className="col-lg-12">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Image{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <input
-                                          style={{
-                                            cursor: "pointer",
-                                            border: "1px solid #767676",
-                                            padding: "5px",
-                                            borderRadius: "2px",
-                                          }}
-                                          type="file"
-                                          name="image"
-                                          placeholder="Chose image"
-                                          onChange={(event) => {
-                                            const file =
-                                              event.currentTarget.files[0];
-                                            setFieldValue("image", file);
-                                            if (file) {
-                                              const imageURL =
-                                                URL.createObjectURL(file);
-                                              setPreviewImage(imageURL);
-                                              // uploadImage(file); // Call the function to upload the image
-                                            } else {
-                                              setPreviewImage(null);
-                                            }
-                                          }}
-                                          // value={values.image}
-                                          onBlur={handleBlur}
-                                          // onChange={handleChange}
-                                          className={
-                                            errors.image && touched.image
-                                              ? "error"
-                                              : ""
-                                          }
-                                        />
-                                        {errors.image && touched.image && (
-                                          <div className="input-feedback">
-                                            {errors.image}
-                                          </div>
-                                        )}
-                                      </div>
-                                      {previewImage && (
-                                        <div className="image-preview col-lg-4">
-                                          <img
-                                            style={{ width: "150px" }}
-                                            src={previewImage}
-                                            alt="Preview"
-                                          />
-                                        </div>
-                                      )}
-                                    </div>
-
-                                    <div className="col-lg-12">
-                                      <div className="form-btn text-center mt-3">
-                                        <button
-                                          className="text-uppercase green_bg color_white"
-                                          type="submit"
-                                          disabled={isSubmitting}>
-                                          Submit
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </form>
-                              )}
-                            </Formik>
-                          </div>
+                    {/* Image Upload */}
+                    <div className="col-lg-12">
+                      <div className="form-group">
+                        <label className="d-block">Image <span className="text-danger">*</span></label>
+                        <input
+                          type="file"
+                          name="image"
+                          onChange={(event) => {
+                            const file = event.currentTarget.files[0];
+                            setFieldValue("image", file);
+                            if (file) {
+                              const imageURL = URL.createObjectURL(file);
+                              setPreviewImage(imageURL);
+                            } else {
+                              setPreviewImage(null);
+                            }
+                          }}
+                          className={`form-control-file ${errors.image && touched.image ? 'is-invalid' : ''}`}
+                        />
+                        {errors.image && touched.image && (
+                          <div className="invalid-feedback">{errors.image}</div>
+                        )}
+                      </div>
+                      {previewImage && (
+                        <div className="image-preview mt-3">
+                          <img src={previewImage} alt="Preview" className="img-thumbnail" style={{ width: "150px" }} />
                         </div>
+                      )}
+                    </div>
+
+                    {/* Submit Button */}
+                    <div className="col-lg-12">
+                      <div className="form-btn text-center mt-3">
+                        <button
+                          className="btn btn-primary text-uppercase"
+                          type="submit"
+                          disabled={isSubmitting}
+                        >
+                          Submit
+                        </button>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </section>
+                </form>
+              )}
+            </Formik>
           </div>
         </div>
       </div>

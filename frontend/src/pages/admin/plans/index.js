@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { fatchPlans,deletePlanById } from "../../../redux/actions/Plans/plansActions";
 import { Table, DeleteModel } from "../../../Components";
 import { useDispatch, useSelector } from "react-redux";
-import Layout from "../../../Components/Layout.js";
+import Layout from "../../../Components/Layout";
 import EditModelForm from "./EditModelForm";
-import { useNavigate, useLocation } from "react-router-dom";
-import CreateModelForm from "./CreateModelForm.js";
-import { Hourglass } from "react-loader-spinner"; // Import the loader component
+import CreateModelForm from "./CreateModelForm";
+import { useNavigate } from "react-router-dom";
+import { Hourglass } from "react-loader-spinner";
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
-const moment = require("moment");
+import moment from "moment";
 
 const PlansManagement = () => {
   const dispatch = useDispatch();
@@ -18,33 +18,21 @@ const PlansManagement = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedPlans, setSelectedPlans] = useState(null);
-  
+
   const loading = plansReducer?.loading;
-  
-  const dataWithFormattedDate = plansReducer?.list?.data?.map((item) => {
-      return {
-          ...item,
-          formattedCreateDate: moment(item?.created_at).format("MMMM DD, YYYY"),
-          formattedUpdateDate: moment(item?.updated_at).format("MMMM DD, YYYY"),
-        };
-    });
+
+  // Format dates
+  const dataWithFormattedDate = plansReducer?.list?.data?.map((item) => ({
+    ...item,
+    formattedCreateDate: moment(item?.created_at).format("MMMM DD, YYYY"),
+    formattedUpdateDate: moment(item?.updated_at).format("MMMM DD, YYYY"),
+  }));
 
   const navigate = useNavigate();
-  const { pathname } = useLocation();
-
-  const navigatePage = (path) => {
-    navigate(path);
-  };
-
-  const columns = [
-    { key: "title", label: "Title" },
-    { key: "formattedCreateDate", label: "Created Date" },
-    { key: "formattedUpdateDate", label: "Updated Date" },
-  ];
 
   useEffect(() => {
-        dispatch(fatchPlans());
-  }, []);
+    dispatch(fatchPlans());
+  }, [dispatch]);
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -54,21 +42,19 @@ const PlansManagement = () => {
     setModalOpen(false);
   };
 
-
-  const handleUpdate = (updatedCompany) => {
-    // dispatch(updateCompany(updatedCompany));
+  const handleUpdate = (updatedPlan) => {
     setSelectedPlans(null);
     handleCloseModal();
   };
 
   const handleDelete = (data) => {
     setSelectedPlans(null);
-    handleCloseModal();
+    setDeleteModalOpen(false);
 
     const planId = data._id;
     dispatch(deletePlanById(planId));
   };
-  
+
   const createHandleOpenModal = () => {
     setCreateModalOpen(true);
   };
@@ -77,37 +63,32 @@ const PlansManagement = () => {
     setCreateModalOpen(false);
   };
 
+  const columns = [
+    { key: "title", label: "Title" },
+    { key: "formattedCreateDate", label: "Created Date" },
+    { key: "formattedUpdateDate", label: "Updated Date" },
+  ];
+
   return (
     <Layout>
-      <section className="forum_page grey_bg pt-5 pb-5">
+      <section className="plans_page grey_bg pt-5 pb-5">
         <div className="container">
           <div className="row">
             <div className="col-lg-12 mx-auto">
-              <div className="forum_content">
-                <h3 className="mb-4 p-2 site_bg color_white">PLANS</h3>
+              <div className="plans_content">
+                <h3 className="mb-4 p-2 site_bg color_white">Plans Management</h3>
 
                 <Tooltip id="my-tooltip" />
-                <div className="container col-md-12">
-                  <div className="row register_form">
-                    <div className="col-lg-12">
-                      <div className="form_field add_courses mb-1 text-right">
-                        <a
-                          className="color_white blue_bg d-inline-block mr-0 p-2 rounded"
-                          // href="#"
-                          // data-toggle="modal"
-                          // data-target="#myModal"
-                          onClick={() => {
-                            createHandleOpenModal();
-                          }}
-                        >
-                          Add
-                        </a>
-                      </div>
-                    </div>
-                  </div>
+                <div className="text-right mb-3">
+                  <button
+                    className="btn btn-primary"
+                    onClick={createHandleOpenModal}
+                  >
+                    Add Plan
+                  </button>
                 </div>
 
-                <div className="forum_table white_bg p-3">
+                <div className="plans_table white_bg p-3">
                   {loading ? (
                     <div className="text-center">
                       <Hourglass
@@ -121,7 +102,7 @@ const PlansManagement = () => {
                       />
                     </div>
                   ) : (
-                    <div className="admincompany">
+                    <>
                       {plansReducer?.list?.data ? (
                         <Table
                           columns={columns}
@@ -149,7 +130,7 @@ const PlansManagement = () => {
                                   data-tooltip-content="Delete"
                                 ></i>
                               ),
-                              buttonClassName: "btn-danger mr-1",
+                              buttonClassName: "btn-danger",
                               onClick: (row) => {
                                 setDeleteModalOpen(true);
                                 setSelectedPlans(row);
@@ -158,20 +139,18 @@ const PlansManagement = () => {
                           ]}
                         />
                       ) : (
-                        <>
-                          <hr />
-                          <div className="text-center">
-                          <b>Add Plans</b>
-                          </div>
-                        </>
+                        <div className="text-center">
+                          <b>No Plans Available</b>
+                        </div>
                       )}
-                    </div>
+                    </>
                   )}
                 </div>
               </div>
             </div>
           </div>
 
+          {/* Edit Plan Modal */}
           {modalOpen && selectedPlans && (
             <EditModelForm
               plansData={selectedPlans}
@@ -180,6 +159,7 @@ const PlansManagement = () => {
             />
           )}
 
+          {/* Delete Plan Modal */}
           {deleteModalOpen && selectedPlans && (
             <DeleteModel
               data={selectedPlans}
@@ -188,8 +168,9 @@ const PlansManagement = () => {
             />
           )}
 
+          {/* Create Plan Modal */}
           {createModalOpen && (
-            <CreateModelForm handleCloseModal={() => createHandleCloseModal(false)} />
+            <CreateModelForm handleCloseModal={createHandleCloseModal} />
           )}
         </div>
       </section>

@@ -94,3 +94,15 @@ code {
     padding: 20px;
   }
 }
+
+
+.contentHeight {
+  min-height: calc(57vh - 4px) !important;
+}
+
+.main_tabs .nav-tabs li a{
+  cursor: pointer;
+}
+.courses_categories {
+  cursor: pointer;
+}

@@ -7,53 +7,31 @@ import {
 } from "../../../redux/actions/admin/courssActions";
 import { IMAGE_URL } from "../../../config/config";
 
-const defaultFilter = {
-  page: 1,
-  pageSize: 10,
-};
 const EditModelForm = ({ courseData, handleUpdate, handleCloseModal }) => {
   const dispatch = useDispatch();
-  const [filter, setFilter] = useState(defaultFilter);
-  const [formInputs, setFormInputs] = useState(courseData);
   const [selectedImage, setSelectedImage] = useState(null);
-
-  const handleFormInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormInputs((prevInputs) => ({
-      ...prevInputs,
-      [name]: name === "image" ? selectedImage : value,
-      // [name]: value,
-    }));
-  };
+  const [formInputs, setFormInputs] = useState(courseData);
 
   useEffect(() => {
-    dispatch(getAllCourses(filter));
-  }, []);
-
+    dispatch(getAllCourses());
+  }, [dispatch]);
 
   const handleFormSubmit = async (values) => {
-    try {
-      // Create a new FormData to handle file data
-      const formData = new FormData();
-      if (selectedImage) {
-        formData.append("image", selectedImage);
-        formData.append("name", values.name);
-        formData.append("level", values.level);
-        formData.append("description", values.description);
-        formData.append("duration", values.duration);
-        formData.append("fees", values.fees);
+    const formData = new FormData();
 
-        // Remove the courseData declaration inside this function
-        // Since it's already passed as a prop to the component
-        await handleUpdate(formData);
-        await dispatch(editCoursesById(values._id, formData));
-      } else {
-        await handleUpdate(formData);
-        await dispatch(editCoursesById(values._id, values));
-      }
-    } catch (error) {
-      console.error("Error updating course:", error);
+    if (selectedImage) {
+      formData.append("image", selectedImage);
     }
+
+    formData.append("name", values.name);
+    formData.append("level", values.level);
+    formData.append("description", values.description);
+    formData.append("duration", values.duration);
+    formData.append("fees", values.fees);
+
+    await dispatch(editCoursesById(courseData._id, formData));
+    handleUpdate(formData);
+    handleCloseModal();
   };
 
   const handleCancel = () => {
@@ -62,252 +40,240 @@ const EditModelForm = ({ courseData, handleUpdate, handleCloseModal }) => {
 
   return (
     <div
-      className="modal fade fourm_modal show"
-      style={{ paddingRight: "17px", display: "block" , background:"rgb(0 0 0 / 40%)" }}
-      id="myModal">
+      className="modal fade show"
+      style={{
+        paddingRight: "17px",
+        display: "block",
+        background: "rgba(0, 0, 0, 0.5)",
+      }}
+      id="editModal"
+    >
       <div className="modal-dialog">
-        <div className="modal-content" style={{ maxHeight: "850px", overflowY: "auto" }}>
+        <div
+          className="modal-content"
+          style={{ maxHeight: "700px", overflowY: "auto" }}
+        >
           <div className="modal-header site_bg">
-            <h4 className="modal-title color_white p-2">Update course</h4>
+            <h4 className="modal-title text-white">Update Course</h4>
             <button
               onClick={handleCancel}
               type="button"
-              className="close"
-              data-dismiss="modal">
+              className="close text-white"
+              data-dismiss="modal"
+            >
               &times;
             </button>
           </div>
+
           <div className="modal-body">
-            <section className="">
-              <div className="">
-                <div className="row m-2">
-                  <div className="col-lg-12 col-md-12 mx-auto">
-                    <div className="register_eroll">
-                      <div className="enrollment_tab">
-                        <ul className="nav nav-tabs">
-                          <li className="nav-item"></li>
-                        </ul>
-                      </div>
-                      <div className="tab-content">
-                        <div
-                          className="tab-pane active container p-0"
-                          id="business"
-                          Name>
-                          <div className="register_form">
-                            <Formik
-                              // initialValues={formInputs}
-                              initialValues={{
-                                ...formInputs,
-                                image: "",
-                              }}
-                              validate={(values) => {
-                                const errors = {};
+            <section>
+              <div className="row m-2">
+                <div className="col-lg-12 col-md-12 mx-auto">
+                  <div className="">
+                    <Formik
+                      initialValues={{
+                        name: formInputs.name || "",
+                        level: formInputs.level || "",
+                        description: formInputs.description || "",
+                        duration: formInputs.duration || "",
+                        fees: formInputs.fees || "",
+                        image: "",
+                      }}
+                      validate={(values) => {
+                        const errors = {};
 
-                                if (!values.name) {
-                                  errors.name = "Name is required";
-                                } else if (values.name.length < 3) {
-                                  errors.name =
-                                    "Name must be at least 3 characters long";
-                                } else if (values.name.length > 100) {
-                                  errors.name =
-                                    "Name less at least 100 characters long";
-                                }
+                        if (!values.name) errors.name = "Name is required";
+                        if (!values.description)
+                          errors.description = "Description is required";
+                        if (!values.level) errors.level = "Level is required";
+                        if (!values.fees) errors.fees = "Fees is required";
+                        if (!values.duration)
+                          errors.duration = "Duration is required";
 
-                                if (!values.description) {
-                                  errors.description =
-                                    "Description is required";
-                                } else if (values.description.length < 3) {
-                                  errors.description =
-                                    "Description must be at least 3 characters long";
-                                } else if (values.description.length > 1000) {
-                                  errors.description =
-                                    "Description less at least 1000 characters long";
-                                }
+                        return errors;
+                      }}
+                      onSubmit={handleFormSubmit}
+                    >
+                      {({
+                        values,
+                        errors,
+                        touched,
+                        handleChange,
+                        handleBlur,
+                        handleSubmit,
+                        setFieldValue,
+                        isSubmitting,
+                      }) => (
+                        <form onSubmit={handleSubmit}>
+                          <h4 className="mb-3 text-uppercase">Course Details</h4>
+                          <div className="row">
+                            {/* Name Field */}
+                            <div className="col-lg-6">
+                              <div className="form-group">
+                                <label className="d-block">
+                                  Name <span className="text-danger">*</span>
+                                </label>
+                                <Field
+                                  type="text"
+                                  name="name"
+                                  placeholder="Course Name"
+                                  className={`form-control ${
+                                    errors.name && touched.name
+                                      ? "is-invalid"
+                                      : ""
+                                  }`}
+                                />
+                                <ErrorMessage
+                                  name="name"
+                                  component="div"
+                                  className="invalid-feedback"
+                                />
+                              </div>
+                            </div>
 
-                                if (!values.level) {
-                                  errors.level = "Level code is required";
-                                } else if (values.level.length < 3) {
-                                  errors.level =
-                                    "Level must be at least 3 characters long";
-                                } else if (values.level.length > 100) {
-                                  errors.level =
-                                    "Level less at least 100 characters long";
-                                }
+                            {/* Level Field */}
+                            <div className="col-lg-6">
+                              <div className="form-group">
+                                <label className="d-block">
+                                  Level <span className="text-danger">*</span>
+                                </label>
+                                <Field
+                                  type="text"
+                                  name="level"
+                                  placeholder="Course Level"
+                                  className={`form-control ${
+                                    errors.level && touched.level
+                                      ? "is-invalid"
+                                      : ""
+                                  }`}
+                                />
+                                <ErrorMessage
+                                  name="level"
+                                  component="div"
+                                  className="invalid-feedback"
+                                />
+                              </div>
+                            </div>
 
-                                if (!values.fees) {
-                                  errors.fees = "Fees is required";
-                                } else if (values.fees.length < 1) {
-                                  errors.fees =
-                                    "Fees must be at least 1 characters long";
-                                } else if (values.fees.length > 6) {
-                                  errors.fees =
-                                    "Fees less at least 6 characters long";
-                                }
+                            {/* Description Field */}
+                            <div className="col-lg-12">
+                              <div className="form-group">
+                                <label className="d-block">
+                                  Description{" "}
+                                  <span className="text-danger">*</span>
+                                </label>
+                                <Field
+                                  as="textarea"
+                                  name="description"
+                                  placeholder="Course Description"
+                                  className={`form-control ${
+                                    errors.description && touched.description
+                                      ? "is-invalid"
+                                      : ""
+                                  }`}
+                                />
+                                <ErrorMessage
+                                  name="description"
+                                  component="div"
+                                  className="invalid-feedback"
+                                />
+                              </div>
+                            </div>
 
-                                if (!values.duration) {
-                                  errors.duration = "Duration is required";
-                                } else if (values.duration.length < 3) {
-                                  errors.duration =
-                                    "Duration must be at least 3 characters long";
-                                } else if (values.duration.length > 20) {
-                                  errors.duration =
-                                    "Duration less at least 20 characters long";
-                                }
+                            {/* Fees Field */}
+                            <div className="col-lg-6">
+                              <div className="form-group">
+                                <label className="d-block">
+                                  Fees <span className="text-danger">*</span>
+                                </label>
+                                <Field
+                                  type="number"
+                                  name="fees"
+                                  placeholder="Course Fees"
+                                  className={`form-control ${
+                                    errors.fees && touched.fees
+                                      ? "is-invalid"
+                                      : ""
+                                  }`}
+                                />
+                                <ErrorMessage
+                                  name="fees"
+                                  component="div"
+                                  className="invalid-feedback"
+                                />
+                              </div>
+                            </div>
 
-                                return errors;
-                              }}
-                              onSubmit={handleFormSubmit}>
-                              {({ handleSubmit, isSubmitting }) => (
-                                <form onSubmit={handleSubmit} className="p-2">
-                                  <h4 className="mb-3 pt-2 pb-2 text-uppercase">
-                                    course details
-                                  </h4>
-                                  <div className="row">
-                                    <div className="col-lg-6">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Name{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <Field
-                                          type="text"
-                                          name="name"
-                                          placeholder="Name"
-                                          className="form-control"
-                                        />
-                                        <ErrorMessage
-                                          name="name"
-                                          component="div"
-                                          className="input-feedback"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="col-lg-6">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Level{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <Field
-                                          type="text"
-                                          name="level"
-                                          placeholder="Level"
-                                          className="form-control"
-                                        />
-                                        <ErrorMessage
-                                          name="level"
-                                          component="div"
-                                          className="input-feedback"
-                                        />
-                                      </div>
-                                    </div>
+                            {/* Duration Field */}
+                            <div className="col-lg-6">
+                              <div className="form-group">
+                                <label className="d-block">
+                                  Duration <span className="text-danger">*</span>
+                                </label>
+                                <Field
+                                  type="text"
+                                  name="duration"
+                                  placeholder="Course Duration"
+                                  className={`form-control ${
+                                    errors.duration && touched.duration
+                                      ? "is-invalid"
+                                      : ""
+                                  }`}
+                                />
+                                <ErrorMessage
+                                  name="duration"
+                                  component="div"
+                                  className="invalid-feedback"
+                                />
+                              </div>
+                            </div>
 
-                                    <div className="col-lg-12">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Description{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <Field
-                                          type="text"
-                                          name="description"
-                                          placeholder="Home Description"
-                                          className="form-control"
-                                        />
-                                        <ErrorMessage
-                                          name="description"
-                                          component="div"
-                                          className="input-feedback"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="col-lg-6">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Fees{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <Field
-                                          type="text"
-                                          name="fees"
-                                          placeholder="Fees"
-                                          className="form-control"
-                                        />
-                                        <ErrorMessage
-                                          name="fees"
-                                          component="div"
-                                          className="input-feedback"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="col-lg-6">
-                                      <div className="form-group">
-                                        <label className="d-block">
-                                          Duration{" "}
-                                          <span className="require">*</span>
-                                        </label>
-                                        <Field
-                                          type="text"
-                                          name="duration"
-                                          placeholder="Duration"
-                                          className="form-control"
-                                        />
-                                        <ErrorMessage
-                                          name="duration"
-                                          component="div"
-                                          className="input-feedback"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="col-lg-12">
-                                      <div className="form-group">
-                                        <label className="d-block">Image</label>
-                                        <input
-                                          type="file"
-                                          name="image"
-                                          accept="image/*"
-                                          onChange={(e) =>
-                                            setSelectedImage(e.target.files[0])
-                                          }
-                                          className="form-control"
-                                        />
-                                        {formInputs.image && (
-                                          <img
-                                            src={`${IMAGE_URL}/${formInputs.image}`}
-                                            alt="Course"
-                                            style={{ maxWidth: "200px" }}
-                                          />
-                                        )}
-                                        {selectedImage && (
-                                          <img
-                                            src={URL.createObjectURL(
-                                              selectedImage
-                                            )}
-                                            alt="Selected"
-                                            style={{ maxWidth: "200px" }}
-                                          />
-                                        )}
-                                      </div>
-                                    </div>
+                            {/* Image Upload */}
+                            <div className="col-lg-12">
+                              <div className="form-group">
+                                <label className="d-block">Image</label>
+                                <input
+                                  type="file"
+                                  name="image"
+                                  accept="image/*"
+                                  onChange={(e) =>
+                                    setSelectedImage(e.target.files[0])
+                                  }
+                                  className="form-control"
+                                />
+                                {formInputs.image && !selectedImage && (
+                                  <img
+                                    src={`${IMAGE_URL}/${formInputs.image}`}
+                                    alt="Course"
+                                    className="img-thumbnail mt-2"
+                                    style={{ maxWidth: "200px" }}
+                                  />
+                                )}
+                                {selectedImage && (
+                                  <img
+                                    src={URL.createObjectURL(selectedImage)}
+                                    alt="Selected"
+                                    className="img-thumbnail mt-2"
+                                    style={{ maxWidth: "200px" }}
+                                  />
+                                )}
+                              </div>
+                            </div>
 
-                                    <div className="col-lg-12">
-                                      <div className="form-btn text-center mt-3">
-                                        <button
-                                          className="text-uppercase green_bg color_white"
-                                          type="submit"
-                                          disabled={isSubmitting}>
-                                          Update
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </form>
-                              )}
-                            </Formik>
+                            {/* Submit Button */}
+                            <div className="col-lg-12 text-center mt-3">
+                              <button
+                                className="btn btn-primary text-uppercase"
+                                type="submit"
+                                disabled={isSubmitting}
+                              >
+                                Update
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    </div>
+                        </form>
+                      )}
+                    </Formik>
                   </div>
                 </div>
               </div>
