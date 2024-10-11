@@ -6,7 +6,13 @@ const controller = require("../../controllers/employee/exam.controller");
 // Middleware
 router.use(authJwt.verifyToken);
 
-// Course Routes
-router.get("/", controller.getExams);
+// Route to create an exam
+router.post("/", controller.createExam);
+
+// Route to get exams for a specific module
+router.get("/modules/:moduleId", controller.getExamsByModuleId);
+
+// New route for inserting default questions
+router.post("/insert-default-questions", controller.insertDefaultQuestions);
 
 module.exports = router;

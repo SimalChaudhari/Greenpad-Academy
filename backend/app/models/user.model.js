@@ -73,9 +73,13 @@ const User = mongoose.model(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Module",
       },
-      coursemodule: {
+      subModule: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Module",
+      },
+      description: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Description",
       },
       is_completed: {
         type: Boolean,

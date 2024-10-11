@@ -49,7 +49,7 @@ export const getModuleById = async (id) => {
     }
 };
 
-export const updateModuleProgress = async (courseData) => {
+export const updateModuleProgress1 = async (courseData) => {
 
     try {
         const response = await axios.post(`${API}/update_progress/${courseData.id}`, { courseData }, { headers: { authorization: getToken() } });
@@ -60,10 +60,21 @@ export const updateModuleProgress = async (courseData) => {
 
 };
 
+export const updateModuleProgress = async (data) => {
+
+    try {
+        const response = await axios.post(`${API}/update_progress`, { data }, { headers: { authorization: getToken() } });
+        return response.data;
+    } catch (error) {
+        throw error.response;
+    }
+
+};
+
 export const editEmployeeNotes = async (id, userData) => {
     try {
-      const response = await axios.put(`${API}/add/note/${id}`, userData, { headers: { authorization: getToken() }} );
-      toast.success("Note Add Successfully.");
+      const response = await axios.put(`${API}/notes/${id}`, userData, { headers: { authorization: getToken() }} );
+    //   toast.success("Note Add Successfully.");
       return response;
     } catch (error) {
       toast.error(error?.response?.data?.message ? error?.response?.data?.message : "Note Add Failed. Try again");

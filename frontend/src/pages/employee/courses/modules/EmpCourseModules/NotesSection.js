@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const NotesSection = ({
   activeTab,
@@ -8,10 +9,24 @@ const NotesSection = ({
   saveNotesContent,
   setSaveNotesContent,
   handleSaveNotes,
+  activeSubmodule
 }) => {
+  const progress_list = useSelector((state) => state?.employeemodule?.progress_list || []);
+  const [notes, setNotes] = useState(null);
+  // console.log(progress_list)
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
+
+  useEffect(() => {
+    if (activeSubmodule) {
+      // Find if the submodule already has notes saved
+      const existingNotes = progress_list?.find(item => item.description === activeSubmodule?.Id);
+      setNotes(existingNotes?.notes[0]?.note || null);
+      setNewNotesContent(existingNotes?.notes[0]?.note || "");
+      setSaveNotesContent(existingNotes?.notes[0]?.note || ""); // Set notes if available in the progress_list
+    }
+  }, [activeSubmodule, progress_list, setSaveNotesContent]);
 
   return (
     <div className="col-xl-2 col-lg-3 col-md-4 col-sm-12 mt-2 notes-section">
@@ -20,24 +35,14 @@ const NotesSection = ({
           <ul className="nav nav-tabs">
             <li className="nav-item">
               <a
-                className={`nav-link ${
-                  activeTab === "newnotes" ? "is_active" : ""
-                }`}
+                className={`nav-link ${activeTab === "newnotes" ? "is_active" : ""
+                  }`}
                 onClick={() => handleTabClick("newnotes")}
               >
-                New Note &nbsp;<i className="far fa-newspaper"></i>
+                {notes && notes.length > 0 ? "Update Note" : "Add Note"} &nbsp;<i className="far fa-newspaper"></i>
               </a>
             </li>
-            <li className="nav-item">
-              <a
-                className={`nav-link ${
-                  activeTab === "savenotes" ? "is_active" : ""
-                }`}
-                onClick={() => handleTabClick("savenotes")}
-              >
-                Saved Notes
-              </a>
-            </li>
+            
           </ul>
         </div>
         <div className="tab-content">
@@ -48,19 +53,26 @@ const NotesSection = ({
               className="notes-textarea"
               value={newNotesContent}
               onChange={(e) => setNewNotesContent(e.target.value)}
-              placeholder="New Notes"
+              placeholder="Enter your note here..."
             ></textarea>
             <button
               className="btn btn-primary btn-sm mt-2 save-btn"
               onClick={handleSaveNotes}
             >
-              Save
+              {notes && notes.length > 0 ? "Update" : "Save"}
             </button>
           </div>
           <div
             className={`tab-pane ${activeTab === "savenotes" ? "active" : ""}`}
           >
-            {/* Saved Notes Logic */}
+            {/* Display Saved Notes */}
+            {notes ? (
+              <div className="saved-notes">
+                <p>{notes}</p>
+              </div>
+            ) : (
+              <p>No saved notes available</p>
+            )}
           </div>
         </div>
       </section>

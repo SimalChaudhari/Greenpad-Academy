@@ -1,75 +1,101 @@
 .exam-page-section {
-    background-color: #f7f7f7;
-    padding: 40px 0;
-  }
-  
-  .exam-title {
-    text-align: center;
-    font-size: 2rem;
-    margin-bottom: 30px;
-    color: #333;
-  }
-  
+  background-color: #f7f7f7;
+  padding: 40px 0;
+}
+
+.exam-title {
+  text-align: start;
+  color: rgb(0, 131, 35);
+  margin: 0px;
+  font-size: 26px;
+  font-style: normal;
+  font-family: "National 2", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  line-height: 1.25;
+  padding-bottom: 24px;
+}
+
+.exam-form {
+  background-color: #fff;
+  padding: 20px 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.question-block {
+  margin-bottom: 20px;
+}
+
+.question-text {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.form-check-input {
+  margin-right: 10px;
+}
+
+.form-check-label {
+  font-size: 1rem;
+}
+
+.submit-btn-container {
+  text-align: center;
+}
+
+.btn-submit {
+  background-color: #008223;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  background-color: #005b17;
+}
+
+.result-section {
+  text-align: center;
+  padding: 20px;
+}
+
+.result-title {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #4CAF50;
+}
+
+.result-score {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+}
+
+.result-percentage {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+@media (max-width: 768px) {
   .exam-form {
-    background-color: #fff;
-    padding: 20px 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px 20px;
   }
-  
-  .question-block {
-    margin-bottom: 20px;
-  }
-  
-  .question-text {
-    font-weight: bold;
-    font-size: 1.1rem;
-    margin-bottom: 10px;
-  }
-  
-  .form-check-label {
-    margin-left: 8px;
-    font-size: 1rem;
-  }
-  
-  .btn-block {
-    display: block;
-    width: 100%;
-    padding: 10px;
-  }
-  
-  .result-section {
-    text-align: center;
-    padding: 20px;
-  }
-  
-  .result-title {
+
+  .exam-title {
     font-size: 1.8rem;
-    margin-bottom: 20px;
-    color: #4CAF50;
   }
-  
-  .result-score {
-    font-size: 1.4rem;
-    margin-bottom: 10px;
+
+  .result-title {
+    font-size: 1.6rem;
   }
-  
-  .result-percentage {
-    font-size: 1.2rem;
-    color: #555;
-  }
-  
-  @media (max-width: 768px) {
-    .exam-form {
-      padding: 15px 20px;
-    }
-    
-    .exam-title {
-      font-size: 1.8rem;
-    }
-    
-    .result-title {
-      font-size: 1.6rem;
-    }
-  }
-  
+}

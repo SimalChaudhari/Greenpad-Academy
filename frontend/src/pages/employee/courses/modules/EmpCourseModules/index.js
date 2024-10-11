@@ -22,7 +22,6 @@ const EmpCourseModulesIndex = () => {
   const dispatch = useDispatch();
   const data = useSelector((state) => state?.employeemodule?.list?.data || []);
   const authId = useSelector((state) => state?.auth?.user);
-  const progress_list = useSelector((state) => state?.employeemodule?.progress_list || []);
 
   const [activeRow, setActiveRow] = useState("");
   const [innerData, setInnerData] = useState([]);
@@ -38,12 +37,33 @@ const EmpCourseModulesIndex = () => {
 
   const [activeModule, setActiveModule] = useState([]);
   const [subModuleDescription, setSubModuleDescription] = useState("");
+  const [programTitle, setProgramTitle] = useState(true);
   const [subModuleImage, setSubModuleImage] = useState(null);
   const [activeSubmodule, setActiveSubmodule] = useState(null);
 
   const { id } = useParams();
   const location = useLocation();
   const courseId = location?.pathname?.split("/")[4];
+
+  useEffect(() => {
+
+    const intervalId = setTimeout(() => {
+      if (activeSubmodule?.Id) {
+        const formData = {
+          descriptionId: activeSubmodule?.Id,
+          courseId: activeSubmodule?.courseId,
+          moduleId: activeSubmodule?.moduleId,
+          subModuleId: activeSubmodule?.subModuleId,
+        };
+        dispatch(updateProgress(formData));
+      }
+    }, 0);
+
+    // Clean up the interval when the component unmounts
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [dispatch, activeSubmodule]);
 
   useEffect(() => {
     dispatch(getAll(id));
@@ -56,17 +76,22 @@ const EmpCourseModulesIndex = () => {
       toast.warning("Please enter some notes before saving.");
       return;
     }
-
+  
     const formData = {
-      course: courseId,
-      module: courseModule_Id,
+      descriptionId: activeSubmodule?.Id,
+      courseId: activeSubmodule?.courseId,
+      moduleId: activeSubmodule?.moduleId,
+      subModuleId: activeSubmodule?.subModuleId,
       notes: textareaContent,
       tag: activeTab,
     };
-
-    dispatch(editEmployeeNoteById(authId.id, formData));
-    setNewNotesContent("");
-    setSaveNotesContent("");
+  
+    // Dispatch action to add or update the note
+    dispatch(editEmployeeNoteById(activeSubmodule?.Id, formData)).then(() => {
+      toast.success(formData?.notes ? "Note updated successfully" : "Note saved successfully");
+      setNewNotesContent("");
+      setSaveNotesContent("");
+    });
   };
 
   const toggleContent = () => {
@@ -86,7 +111,7 @@ const EmpCourseModulesIndex = () => {
       <section className="enrolled_courses grey_bg pt-5 pb-5">
         <div className="container-fluid">
           <div className="row">
-            {showContent && (
+            {!showContent && (
               <ModulesList
                 data={data}
                 activeRow={activeRow}
@@ -98,10 +123,11 @@ const EmpCourseModulesIndex = () => {
                 courseModule_Id={courseModule_Id}
                 setCourseModule_Id={setCourseModule_Id}
                 setSubModuleDescription={setSubModuleDescription}
+                setProgramTitle={setProgramTitle}
                 activeSubmodule={activeSubmodule}
               />
             )}
-            <div className={showContent ? "col-xl-8 mt-2" : "col-xl-12 mt-2"}>
+            <div className={!showContent ? "col-xl-8 mt-2" : "col-xl-12 mt-2"}>
               <ModuleDescription
                 data={data}
                 activeModuleRow={activeModuleRow}
@@ -111,9 +137,13 @@ const EmpCourseModulesIndex = () => {
                 courseId={courseId}
                 courseModule_Id={courseModule_Id}
                 setActiveSubmodule={setActiveSubmodule}
+                programTitle={programTitle}
+                setProgramTitle={setProgramTitle}
+                showContent={showContent}
+                toggleContent={toggleContent}
               />
             </div>
-            {showContent && (
+            {!showContent && (
               <NotesSection
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
@@ -122,6 +152,7 @@ const EmpCourseModulesIndex = () => {
                 saveNotesContent={saveNotesContent}
                 setSaveNotesContent={setSaveNotesContent}
                 handleSaveNotes={handleSaveNotes}
+                activeSubmodule={activeSubmodule}
               />
             )}
           </div>

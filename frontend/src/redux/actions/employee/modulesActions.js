@@ -235,6 +235,8 @@ export const updateProgress = (courseData) => {
     try {
       const module = await updateModuleProgress(courseData);
       dispatch(updateModuleSuccess(module));
+      
+      dispatch(moduleProgreeListSuccess(module?.moduleProgressForCourse));
       return module
     } catch (error) {
       dispatch(updateModuleFailure(error.message));
@@ -264,9 +266,9 @@ export const editEmployeeNoteById = (id, updatedData) => {
 
     // Call your employeesNote list service here and pass the id
     const editedEmployee = await editEmployeeNotes(id, updatedData);
-    
-    dispatch(getAll(updatedData.course));
-    dispatch(getModulesProgress(updatedData.course));
+    console.log({updatedData})
+    dispatch(getAll(updatedData.courseId));
+    dispatch(getModulesProgress(updatedData.courseId));
 
     try { 
       // Dispatch the employeesNote list Success action with the user data

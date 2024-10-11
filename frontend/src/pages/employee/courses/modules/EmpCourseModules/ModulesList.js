@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { FaCheck } from "react-icons/fa"; // Importing a check icon from FontAwesome
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+// import programImage from "./path-to-your-image.jpg"; // Import your static image
+import { Typography } from "@mui/material";
 
 const ModulesList = ({
   data,
@@ -12,11 +15,13 @@ const ModulesList = ({
   setActiveModule,
   setSubModuleDescription,
   activeSubmodule,
+  setProgramTitle,
   setExamSection // New prop to handle exam section click
 }) => {
   const [module, setModule] = useState(null);
   const navigate = useNavigate();
-  
+  const progress_list = useSelector((state) => state?.employeemodule?.progress_list || []);
+
   const toggleModule = (row) => {
     const isSameRow = activeRow === row?._id;
     setActiveRow(isSameRow ? null : row?._id);
@@ -29,6 +34,11 @@ const ModulesList = ({
 
   const handleSubModuleClick = (subModule) => {
     setSubModuleDescription(subModule?.descriptions);
+    setProgramTitle(false);
+  };
+
+  const handleProgramTitleClick = () => {
+    setProgramTitle(true);
   };
 
   const handleExamClick = (moduleId) => {
@@ -47,19 +57,30 @@ const ModulesList = ({
     >
       <div className="main_tab_content">
         <div className="tab-content">
-          <div className="mb-2 pt-3 black_bg pr-3 pl-3 pt-1 pb-3 color_white heading_tabs text-center">
-            Modules
+
+          <div className="mb-3 color_white heading_tabs text-center">
+            <Typography >Programme</Typography>
           </div>
+
+          {/* Static Program Title */}
+          <div onClick={() => toggleModule({ _id: 'programme_title' })}
+            className={`mb-3 pointer ${activeRow === 'programme_title'
+              ? "active-module-bg color_white"
+              : "inactive-module-bg color_black"
+              }`}>
+            <div className="pt-2 pb-2" onClick={() => handleProgramTitleClick()}>Programme Title</div>
+          </div>
+
+          {/* Chapters (Modules List) */}
           {data?.modules?.map((row, index) => (
             <div key={row?._id}>
               {/* Module header */}
               <div
                 onClick={() => toggleModule(row)}
-                className={`mb-3 pointer ${
-                  activeRow === row?._id
-                    ? "active-module-bg color_white"
-                    : "inactive-module-bg color_black"
-                }`}
+                className={`mb-3 pointer ${activeRow === row?._id
+                  ? "active-module-bg color_white"
+                  : "inactive-module-bg color_black"
+                  }`}
               >
                 <div className="pt-2 pb-2">
                   <b>{index + 1}. </b>
@@ -69,22 +90,21 @@ const ModulesList = ({
 
               {/* Submodules and exam section */}
               {activeRow === row?._id && module?.module?.length > 0 && (
-                <div className="ml-3">
+                <div className="">
                   {module.module.map((subModule, subIndex) => (
                     <div
                       key={subModule?._id}
                       onClick={() => handleSubModuleClick(subModule)}
-                      className={`mb-2 pointer submodule-bg d-flex align-items-center ${
-                        activeSubmodule?.moduleId === subModule?._id ? "submodule-active" : ""
-                      }`}
+                      className={`mb-2 pointer submodule-bg d-flex align-items-center ${activeSubmodule?.subModuleId === subModule?._id ? "submodule-active" : ""
+                        }`}
                     >
                       <div className="p2 d-flex align-items-center">
                         <b>{subIndex + 1}. </b>
                         <span className="ml-2">{subModule?.title}</span>
 
                         {/* Display check icon if the submodule is active */}
-                        {activeSubmodule?.moduleId === subModule?._id && (
-                          <FaCheck className="ml-2 text-success fa-check" />
+                        {progress_list.some(item => item.subModule === subModule?._id) && (
+                          <FaCheck className="ml-2 text-success fa-check" title="Read" />
                         )}
                       </div>
                     </div>
@@ -93,10 +113,9 @@ const ModulesList = ({
                   {/* Exam Section */}
                   <div
                     onClick={() => handleExamClick(row?._id)}
-                    className="exam-section mt-3 pointer d-flex align-items-center p2"
+                    className="exam-section mt-2  mb-2 pointer d-flex align-items-center p2"
                   >
-                    <b>Exam</b>
-                    <span className="m-2 mb-2">Final Exam for {row?.module_title}</span>
+                    <span className="m-2 mb-2">Knowledge evaluation</span>
                   </div>
                 </div>
               )}
