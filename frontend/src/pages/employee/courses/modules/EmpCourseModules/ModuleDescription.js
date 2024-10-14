@@ -66,35 +66,45 @@ const ModuleDescription = ({ data, subModuleDescription, setActiveSubmodule, pro
         setActiveSubmodule(allDescriptions[currentPage]);
     }, [currentPage, allDescriptions, setActiveSubmodule]);
 
+    // Function to toggle zoom and fullscreen
     const toggleZoom = () => {
-        setZoomed(!isZoomed);
+        setZoomed(false);
+
         if (screenfull.isEnabled) {
-            if (fullscreen) {
-                screenfull.exit();
+            if (!fullscreen) {
+                screenfull.request().then(() => setFullscreen(true));
             } else {
-                screenfull.request();
+                screenfull.exit().then(() => setFullscreen(false));
             }
-            setFullscreen(!fullscreen);
         }
     };
+
+    // Listen for fullscreen change events (to sync state correctly)
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            if (screenfull.isEnabled) {
+                setFullscreen(screenfull.isFullscreen);
+            }
+        };
+
+        screenfull.on("change", handleFullscreenChange);
+
+        // Clean up the event listener on unmount
+        return () => screenfull.off("change", handleFullscreenChange);
+    }, []);
 
     // Handle Escape key to exit fullscreen
     useEffect(() => {
         const handleEscKey = (event) => {
-            if (event.key === "Escape") {
-                if (fullscreen) {
-                    toggleZoom(); // Exit zoom when Esc is pressed
-                }
+            if (event.key === "Escape" && fullscreen) {
+                screenfull.exit().then(() => setFullscreen(false));
             }
         };
 
-        // Attach keydown event listener
         window.addEventListener("keydown", handleEscKey);
 
-        // Clean up the event listener on component unmount
-        return () => {
-            window.removeEventListener("keydown", handleEscKey);
-        };
+        // Clean up the event listener on unmount
+        return () => window.removeEventListener("keydown", handleEscKey);
     }, [fullscreen]);
 
     // Handle previous and next pagination for submodule descriptions
@@ -162,7 +172,11 @@ const ModuleDescription = ({ data, subModuleDescription, setActiveSubmodule, pro
 
                             {/* Zoom Control */}
                             <button onClick={toggleZoom} className="btn btn-sm">
-                                {isZoomed || fullscreen ? <FiZoomOut /> : <FiZoomIn />}
+                                {isZoomed || fullscreen ? (
+                                    <FiZoomOut style={{ color: '#fff', fontSize: '22px' }} /> // Change color and size as needed
+                                ) : (
+                                    <FiZoomIn style={{ color: '#fff', fontSize: '22px' }} /> // Change color and size as needed
+                                )}
                             </button>
                         </div>
                     )}

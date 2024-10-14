@@ -8,6 +8,7 @@ const MyAcademy = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const courses = useSelector((state) => state.employeeCourses);
+  const data = useSelector((state) => state?.employeemodule?.list?.data || []);
 
   const progress_list = useSelector(
     (state) => state.employeemodule?.progress_list || []
@@ -15,6 +16,33 @@ const MyAcademy = () => {
 
   const [collapsedCourses, setCollapsedCourses] = useState({});
   const [collapsedModules, setCollapsedModules] = useState({});
+  const [progress, setProgress] = useState(0); // State to track progress
+  const [allDescriptions, setAllDescriptions] = useState([]); // State to store all descriptions
+
+
+
+  useEffect(() => {
+    if (data?.modules && Array.isArray(data.modules)) {
+      const descriptionsList = data.modules.flatMap((module) =>
+        module.module?.flatMap((subModule) =>
+          subModule?.descriptions?.map((description) => ({
+            courseId: data?._id,
+            moduleId: module?._id,
+            subModuleId: subModule?._id,
+            Id: description?._id,
+            content: description?.content
+          }))
+        )
+      );
+      setAllDescriptions(descriptionsList.filter(Boolean)); // Remove any undefined or null values
+    }
+  }, [data]);
+
+  useEffect(() => {
+    const newProgress = ((progress_list.length) / allDescriptions.length) * 100;
+    setProgress(newProgress);
+  }, [progress_list, allDescriptions]);
+
 
   useEffect(() => {
     dispatch(getAllModulesProgress());
@@ -38,22 +66,13 @@ const MyAcademy = () => {
 
   // Function to determine module status
   const getModuleStatus = (moduleId) => {
-    const moduleEntry = progress_list.find((item) => item.module === moduleId);
+    console.log('====================================');
+    console.log(moduleId);
+    console.log('====================================');
+    const moduleEntry = progress_list.find((item) => item.subModule === moduleId);
     return moduleEntry?.is_completed ? "Complete" : "Pending";
   };
 
-  // Calculate course progress percentage
-  const calculateCourseProgress = (modules, courseId) => {
-    const totalModules = modules.flatMap((m) => m.module).length;
-    
-    if (totalModules === 0) return 0;
-
-    const completedModules = progress_list.filter(
-      (progress) => progress.course === courseId && progress.is_completed
-    ).length;
-    console.log({modules});
-    return ((completedModules / totalModules) * 100).toFixed(2);
-  };
 
   return (
     <SubLayout>
@@ -77,9 +96,8 @@ const MyAcademy = () => {
                       >
                         <b>{course.name}</b>
                         <i
-                          className={`fas fa-angle-${
-                            isCourseCollapsed ? "down" : "up"
-                          }`}
+                          className={`fas fa-angle-${isCourseCollapsed ? "down" : "up"
+                            }`}
                           style={{ float: "right" }}
                         ></i>
                       </a>
@@ -87,19 +105,17 @@ const MyAcademy = () => {
                       <div className="courses_progress">
                         <div className="progress_view">
                           <label>
-                            Progress{" "}
                             <span>
-                              {calculateCourseProgress(course.modules, course._id)}%
+
+                              <span>{`Progress: ${Math.round(progress)}%`}</span>
                             </span>
                           </label>
                           <div className="progress">
                             <div
                               className="progress-bar orange"
                               style={{
-                                width: `${calculateCourseProgress(
-                                  course.modules,
-                                  course._id
-                                )}%`,
+                                width: `${progress}%`,
+                                backgroundColor: "#4CAF50",
                               }}
                             ></div>
                           </div>
@@ -128,9 +144,8 @@ const MyAcademy = () => {
                                   >
                                     <b>{moduleItem.module_title}</b>
                                     <i
-                                      className={`fas fa-angle-${
-                                        isModuleCollapsed ? "down" : "up"
-                                      }`}
+                                      className={`fas fa-angle-${isModuleCollapsed ? "down" : "up"
+                                        }`}
                                       style={{ float: "right" }}
                                     ></i>
                                   </a>
@@ -138,9 +153,8 @@ const MyAcademy = () => {
 
                                 <div
                                   id={`collapseModule${moduleIndex}`}
-                                  className={`collapse ${
-                                    isModuleCollapsed ? "" : "show"
-                                  }`}
+                                  className={`collapse ${isModuleCollapsed ? "" : "show"
+                                    }`}
                                   data-parent="#accordion"
                                 >
                                   <div className="card-body">
@@ -152,9 +166,10 @@ const MyAcademy = () => {
                                               {module.title.length > 65
                                                 ? `${module.title.substring(0, 65)}...`
                                                 : module.title}
+                                                
                                               <span>
                                                 {" "}
-                                                {getModuleStatus(module._id)}
+                                                {getModuleStatus(module?._id)}
                                               </span>
                                             </li>
                                           )
