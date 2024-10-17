@@ -66,9 +66,6 @@ const MyAcademy = () => {
 
   // Function to determine module status
   const getModuleStatus = (moduleId) => {
-    console.log('====================================');
-    console.log(moduleId);
-    console.log('====================================');
     const moduleEntry = progress_list.find((item) => item.subModule === moduleId);
     return moduleEntry?.is_completed ? "Complete" : "Pending";
   };

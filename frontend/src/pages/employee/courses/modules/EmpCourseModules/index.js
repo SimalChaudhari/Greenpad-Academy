@@ -33,7 +33,7 @@ const EmpCourseModulesIndex = () => {
   const [editmodalOpen, setEditModalOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
   const [courseModule_Id, setCourseModule_Id] = useState(null);
-  const [showContent, setShowContent] = useState(true);
+  const [showContent, setShowContent] = useState(false);
 
   const [activeModule, setActiveModule] = useState([]);
   const [subModuleDescription, setSubModuleDescription] = useState("");
@@ -45,6 +45,18 @@ const EmpCourseModulesIndex = () => {
   const location = useLocation();
   const courseId = location?.pathname?.split("/")[4];
 
+  
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const topElement = document.getElementById("Top");
+      if (topElement) {
+        topElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 100); // 100ms delay
+  
+    return () => clearTimeout(timeoutId); // Cleanup timeout on unmount
+  }, []);
+  
   useEffect(() => {
 
     const intervalId = setTimeout(() => {
@@ -111,6 +123,7 @@ const EmpCourseModulesIndex = () => {
       <section className="enrolled_courses grey_bg pt-5 pb-5">
         <div className="container-fluid">
           <div className="row">
+          <div id="Top"></div>
             {!showContent && (
               <ModulesList
                 data={data}
