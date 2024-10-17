@@ -107,6 +107,20 @@ const ModuleDescription = ({ data, subModuleDescription, setActiveSubmodule, pro
         return () => window.removeEventListener("keydown", handleEscKey);
     }, [fullscreen]);
 
+    // Reset the fullscreenExited state when fullscreen is toggled
+    useEffect(() => {
+        if (!fullscreen) {
+            const timeoutId = setTimeout(() => {
+                const topElement = document.getElementById("Top");
+                if (topElement) {
+                    topElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+            }, 100); // 100ms delay
+
+            return () => clearTimeout(timeoutId); // Cleanup timeout on unmount
+        }
+    }, [fullscreen]);
+
     // Handle previous and next pagination for submodule descriptions
     const handlePrevPage = () => {
         if (currentPage == 1) {
@@ -197,7 +211,7 @@ const ModuleDescription = ({ data, subModuleDescription, setActiveSubmodule, pro
                                 </div>
 
                                 {/* Pagination controls */}
-                                <div className="pagination-controls">
+                                <div className="pagination-controls mt-3">
                                     <button
                                         onClick={handlePrevPage}
                                         disabled={currentPage === 0} // Disable if on the first page

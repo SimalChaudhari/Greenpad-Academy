@@ -620,8 +620,8 @@ button.color_white {
 }
 
 .fullscreen .description-content img {
-    max-width: 80%;
-    max-height: 80%;
+    max-width:85%;
+    max-height:85%;
     object-fit: contain;
     margin-top: 50px;
     /* Push the image down so it doesn't overlap with the title */

@@ -45,7 +45,7 @@ const EmpCourseModulesIndex = () => {
   const location = useLocation();
   const courseId = location?.pathname?.split("/")[4];
 
-  
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       const topElement = document.getElementById("Top");
@@ -53,10 +53,10 @@ const EmpCourseModulesIndex = () => {
         topElement.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }, 100); // 100ms delay
-  
+
     return () => clearTimeout(timeoutId); // Cleanup timeout on unmount
   }, []);
-  
+
   useEffect(() => {
 
     const intervalId = setTimeout(() => {
@@ -88,7 +88,7 @@ const EmpCourseModulesIndex = () => {
       toast.warning("Please enter some notes before saving.");
       return;
     }
-  
+
     const formData = {
       descriptionId: activeSubmodule?.Id,
       courseId: activeSubmodule?.courseId,
@@ -97,7 +97,7 @@ const EmpCourseModulesIndex = () => {
       notes: textareaContent,
       tag: activeTab,
     };
-  
+
     // Dispatch action to add or update the note
     dispatch(editEmployeeNoteById(activeSubmodule?.Id, formData)).then(() => {
       toast.success(formData?.notes ? "Note updated successfully" : "Note saved successfully");
@@ -123,7 +123,7 @@ const EmpCourseModulesIndex = () => {
       <section className="enrolled_courses grey_bg pt-5 pb-5">
         <div className="container-fluid">
           <div className="row">
-          <div id="Top"></div>
+            <div id="Top"></div>
             {!showContent && (
               <ModulesList
                 data={data}
