@@ -1,25 +1,46 @@
+@font-face {
+  font-family: 'National_2';
+  src: url('../../../assets/fonts/TestNational2-Thin.otf') format('opentype');
+  font-weight: 300;
+  font-style: oblique;
+}
+@font-face {
+  font-family: 'National_2_Regular';
+  src: url('../../../assets/fonts/TestNational2-Regular.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'National_2_Bold';
+  src: url('../../../assets/fonts/TestNational2-Bold.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
 .exam-page-section {
-  background-color: #f7f7f7;
+  /* background-color: #f7f7f7; */
+  background-color: #fff;
   padding: 40px 0;
 }
 
 .exam-title {
   text-align: start;
-  color: rgb(0, 131, 35);
+  color: #008323;
   margin: 0px;
   font-size: 26px;
   font-style: normal;
-  font-family: "National 2", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "National_2_Bold", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans", "Hiragino Kaku Gothic Pro", 游ゴシック, 游ゴシック体, YuGothic, "Yu Gothic", "ＭＳ ゴシック", "MS Gothic", sans-serif;
   font-weight: 700;
   line-height: 1.25;
   padding-bottom: 24px;
 }
 
 .exam-form {
-  background-color: #fff;
-  padding: 20px 30px;
+  /* background-color: #fff; */
+  padding: 20px 0px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
 }
 
 .question-block {
@@ -27,23 +48,60 @@
 }
 
 .question-text {
-  font-weight: bold;
-  font-size: 1.1rem;
-  margin-bottom: 10px;
+  color: #404040;
+  margin: 0px;
+  font-size: 20px;
+  overflow-wrap: break-word;
+  /* font-style: normal; */
+  font-family: 'National_2', 'Helvetica Neue', Helvetica, Arial, 'Hiragino Sans', 'Hiragino Kaku Gothic Pro', 游ゴシック, 游ゴシック体, YuGothic, 'Yu Gothic', 'ＭＳ ゴシック', 'MS Gothic', sans-serif;
+  font-weight: 700 !important;
+  line-height: 1.25;
+  white-space: normal;
+  text-decoration: none;
+  margin-bottom: 15px;
+  letter-spacing: .99px;
+  word-spacing: .99px;
 }
 
 .form-check {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 5px !important;
+  padding: 7px;
+}
+.form-check:hover{
+  border: 1px dotted;
+  border-radius: 5px;
 }
 
 .form-check-input {
-  margin-right: 10px;
+  margin-right: 8px;
+  margin-bottom: 10px !important;
+  margin-left: 10px;
+  /* margin-left: -1.2em !important; */
+  margin-left: -0.8em !important;
+  padding: 9px !important;
 }
 
 .form-check-label {
+  margin-left: 15px;
   font-size: 1rem;
+  font-family: 'National_2', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 600 !important;
+  line-height: 1.25;
+  white-space: normal;
+  text-decoration: none;
+  letter-spacing: .99px;
+  word-spacing: .99px;
+}
+
+.form-check.checked {
+  font-family: 'National_2_Regular' !important;
+  background-color: #F2F2F2;
+  border: 1px solid;
+  border-radius: 5px;
+  font-weight: bolder;
+  color: #000;
 }
 
 .submit-btn-container {
@@ -53,17 +111,25 @@
 .btn-submit {
   background-color: #008223;
   color: #fff;
-  padding: 10px 20px;
+  padding: 10px 25px;
   border: none;
   font-size: 1rem;
-  font-weight: bold;
-  border-radius: 5px;
+  /* font-weight: bold; */
+  /* border-radius: 2px; */
   cursor: pointer;
 }
-
-.btn-submit:hover {
-  background-color: #005b17;
+.btn-border {
+  padding: 5px;
+  border: 1px solid transparent; /* Add a transparent border to allow smooth transition */
+  background-color: transparent;
+  transition: border-color 0.3s ease, border-radius 0.3s ease; /* Smooth transition for border color and radius */
 }
+
+.btn-border:hover {
+  border-color: #404040; /* Change only the border color on hover */
+  border-radius: 5px; /* This can also be animated */
+}
+
 
 .result-section {
   text-align: center;
@@ -98,4 +164,33 @@
   .result-title {
     font-size: 1.6rem;
   }
+  
 }
+
+
+
+.form-check-input:checked  {
+  background-color: black !important; 
+  border-color: black !important; 
+  padding: 9px;
+}
+  .form-check-input:checked[type=radio] {
+    --bs-form-check-bg-image: none !important;
+}
+
+.form-check-input:checked + .form-check-label::after {
+  /* content: '✔';  */
+  content: '✔'; 
+  position: absolute;
+  left: 16px; 
+  top: 56%;
+  transform: translateY(-50%);
+  color: white; 
+  font-size: 13px; 
+  line-height: 20px; 
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+}
+
+

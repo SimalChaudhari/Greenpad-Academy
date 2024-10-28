@@ -170,7 +170,7 @@ const EditModelForm = ({ courseData, /*handleUpdate,*/ handleCloseModal }) => {
                                     <div className="col-lg-12">
                                       <div className="form-btn text-center mt-3">
                                         <button
-                                          className="text-uppercase green_bg color_white"
+                                          className="text-uppercase green_bg "
                                           type="submit"
                                           disabled={isSubmitting}
                                         >

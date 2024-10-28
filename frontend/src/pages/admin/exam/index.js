@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate  } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../../../Components/Layout";
 import { getExamByModuleId } from "../../../services/employee/ExamService";
 import { Modal } from "react-bootstrap";
@@ -74,7 +74,7 @@ const ExamPage = () => {
 
     // Handle redirection to modules after result is viewed
     const handleBackToModules = () => {
-        navigate(`/employee/courses/modules/${courses[0]?._id}`); // Redirect to modules page
+        navigate(`/employee/courses/modules/${courses[0]?._id}`);
     };
 
     return (
@@ -94,7 +94,10 @@ const ExamPage = () => {
                                                 {questionIndex + 1}. {question.question}
                                             </p>
                                             {question.options.map((option, optionIndex) => (
-                                                <div key={optionIndex} className="form-check">
+                                                <div
+                                                    key={optionIndex}
+                                                    className={`form-check ${selectedAnswers[question._id] === optionIndex ? 'checked' : ''}`}
+                                                >
                                                     <input
                                                         type="radio"
                                                         className="form-check-input"
@@ -107,20 +110,23 @@ const ExamPage = () => {
                                                                 question._id,
                                                                 optionIndex,
                                                                 optionIndex === question.correctAnswer,
-                                                                question.explanation // Pass the explanation to show when correct
+                                                                question.explanation
                                                             )
                                                         }
                                                     />
-                                                    <label for={`question${optionIndex}`} className="form-check-label">{option}</label>
+                                                    <label htmlFor={`question${optionIndex}`} className="form-check-label">{option}</label>
                                                 </div>
                                             ))}
+
                                         </div>
                                     ))}
 
                                     {/* Submit button */}
                                     <div className="submit-btn-container">
-                                        <button className="btn-submit" onClick={handleSubmit}>
-                                            Done
+                                        <button className="btn-border" onClick={handleSubmit}>
+                                            <div className="btn-submit">
+                                                Done
+                                            </div>
                                         </button>
                                     </div>
                                 </div>
@@ -131,7 +137,7 @@ const ExamPage = () => {
                                     <p className="result-percentage">
                                         Percentage: {((score / questions.length) * 100).toFixed(2)}%
                                     </p>
-                                    
+
                                     {/* Back to Modules button */}
                                     <div className="submit-btn-container mt-4">
                                         <button className="btn-submit" onClick={handleBackToModules}>

@@ -99,7 +99,7 @@ const ModulesList = ({
                         }`}
                     >
                       <div className="p2 d-flex align-items-center">
-                        <b>{subIndex + 1}. </b>
+                        {/*<b>{subIndex + 1}. </b>*/}
                         <span className="ml-2">{subModule?.title}</span>
 
                         {/* Display check icon if the submodule is active */}

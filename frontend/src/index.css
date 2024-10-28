@@ -31,7 +31,7 @@ code {
 
 .register_form {
   margin: 0 auto;
-  max-width: 500px;
+  /* max-width: 500px; */
 }
 
 .form-group input,
